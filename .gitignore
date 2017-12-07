@@ -1,0 +1,8 @@
+__pycache__
+*.py[co]
+*.mo
+*.swp
+
+/build/
+/dist/
+/*.egg*/

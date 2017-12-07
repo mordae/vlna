@@ -1,0 +1,11 @@
+aiohttp<3,>=2
+aiohttp-wsgi<1
+Bleach
+click
+Flask-Babel
+Flask-Classy
+Flask-Menu
+Markdown
+requests
+SQLSoup
+tabulate

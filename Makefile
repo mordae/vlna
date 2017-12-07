@@ -7,15 +7,24 @@ dias  = $(shell find doc -name '*.dia')
 pngs  = $(dots:.dot=.png) $(dias:.dia=.png)
 pdfs  = $(adocs:.adoc=.pdf)
 
-all: doc
-doc: html pdf png
+pos = $(wildcard */site/translations/*/*/*.po)
+mos = $(pos:.po=.mo)
+pot = vlna/site/translations/messages.pot
 
+pys = $(shell find vlna -name '*.py')
+htmls = $(shell find vlna -name '*.html')
+src = ${pys} ${htmls}
+
+all: doc lang
+doc: html pdf png
+lang: ${mos}
 html: png ${htmls}
 pdf: ${pdfs}
 png: ${pngs}
 
 clean:
 	rm -f doc/*.html doc/*.png doc/*.cache doc/*.pdf ${pngs}
+	rm -f ${mos} ${pot}
 	rm -rf doc/.asciidoctor
 
 %.html: %.adoc Makefile
@@ -30,5 +39,17 @@ clean:
 %.png: %.dia Makefile
 	dia -e $@ $<
 	mogrify -bordercolor white -border 32x32 $@
+
+%.mo: %.po
+	pybabel -q compile -o $@ -i $<
+
+${pos}: ${pot}
+	pybabel -q update -i ${pot} -d $(dir ${pot})
+
+${pot}: ${src}
+	pybabel -q extract -F babel.cfg vlna -o ${pot} --omit-header --no-location
+
+
+.PHONY: all lang clean
 
 # EOF

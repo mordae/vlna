@@ -1,0 +1,15 @@
+msgid "Subscriptions"
+msgstr ""
+
+msgid "Transmissions"
+msgstr ""
+
+msgid "Toggle navigation"
+msgstr ""
+
+msgid "Pirate"
+msgstr ""
+
+msgid "Wave"
+msgstr ""
+
