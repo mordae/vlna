@@ -17,7 +17,7 @@ __all__ = ['site', 'db']
 
 
 log = getLogger(__name__)
-log.addHandler(NullHandler)
+log.addHandler(NullHandler())
 
 site = Flask(__name__)
 site.secret_key = urandom(16)
