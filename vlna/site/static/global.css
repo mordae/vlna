@@ -1,3 +1,13 @@
 .navbar-utility {
 	float: right;
 }
+
+.form-header {
+	border-bottom: 1px solid #ddd;
+}
+
+.form-footer {
+	margin-top: 10px;
+	padding-top: 15px;
+	border-top: 1px solid #ddd;
+}

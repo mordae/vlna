@@ -4,12 +4,55 @@
 
 {% block content %}
 <div class="container">
- <div class="panel panel-default">
-  <div class="panel-heading">{{_('Subscriptions')}}</div>
-  <div class="panel-body">
-   List of channels.
-  </div>
+ <div class="form-header">
+  <h2>{{_('Subscriptions')}}</h2>
  </div>
+
+ <form action="/sub/update" method="POST">
+  <div class="row">
+   <div class="col col-sm-6">
+    <h3>{{_('Public')}}</h3>
+
+    {% for sub in subs if sub.public %}
+    <li class="checkbox">
+     <label>
+      {% if sub.opt_in or (sub.group and not sub.opt_out) %}
+      <input type="checkbox" checked="checked"/>
+      {% else %}
+      <input type="checkbox"/>
+      {% endif %}
+      {{sub.channel}}
+     </label>
+    </li>
+    {% else %}
+    <p class="text-center text-muted">{{_('None available.')}}</p>
+    {% endfor %}
+   </div>
+
+   <div class="col col-sm-6">
+    <h3>{{_('Private')}}</h3>
+
+    {% for sub in subs if not sub.public %}
+    <li class="checkbox">
+     <label>
+      {% if not sub.opt_out %}
+      <input type="checkbox" checked="checked"/>
+      {% else %}
+      <input type="checkbox"/>
+      {% endif %}
+      {{sub.channel}}
+     </label>
+    </li>
+    {% else %}
+    <p class="text-center text-muted">{{_('None available.')}}</p>
+    {% endfor %}
+   </div>
+  </div>
+
+  <div class="form-footer">
+   <button type="submit" class="btn btn-primary">{{_('Save')}}</button>
+  </div>
+ </form>
 </div>
 {% endblock %}
 

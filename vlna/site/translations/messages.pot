@@ -1,3 +1,6 @@
+msgid "There is no user account for you, contact administrator."
+msgstr ""
+
 msgid "Subscriptions"
 msgstr ""
 
@@ -11,5 +14,17 @@ msgid "Pirate"
 msgstr ""
 
 msgid "Wave"
+msgstr ""
+
+msgid "Public"
+msgstr ""
+
+msgid "None available."
+msgstr ""
+
+msgid "Private"
+msgstr ""
+
+msgid "Save"
 msgstr ""
 

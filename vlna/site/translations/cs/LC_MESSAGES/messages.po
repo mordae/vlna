@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-12-07 19:42+0100\n"
+"POT-Creation-Date: 2017-12-20 22:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -18,6 +18,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+
+msgid "There is no user account for you, contact administrator."
+msgstr "Není tu pro Tebe účet, ozvi se správci."
 
 msgid "Subscriptions"
 msgstr "Odběry"
@@ -33,4 +36,16 @@ msgstr "Pirátská"
 
 msgid "Wave"
 msgstr "Vlna"
+
+msgid "Public"
+msgstr "Veřejné"
+
+msgid "None available."
+msgstr "Nejsou k dispozici."
+
+msgid "Private"
+msgstr "Soukromé"
+
+msgid "Save"
+msgstr "Uložit"
 

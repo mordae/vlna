@@ -13,6 +13,7 @@ from sqlsoup import SQLSoup
 from logging import getLogger, NullHandler
 
 from vlna.exn import InvalidUsage
+from vlna.util import map_view
 
 
 __all__ = ['site', 'db']
@@ -90,6 +91,8 @@ def insert_lang_cookie(response):
 # Use SQLSoup for database access.
 db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 
+map_view(db, 'subscription', ['user', 'channel'])
+
 
 @site.teardown_request
 def teardown_request(exn=None):
@@ -134,7 +137,12 @@ def extract_auth_info():
 @site.route('/')
 @register_menu(site, 'sub', _('Subscriptions'))
 def subscriptions():
-    return render_template('sub.html')
+    subs = db.subscription \
+            .filter_by(user=g.user.login) \
+            .order_by('channel') \
+            .all()
+
+    return render_template('sub.html', subs=subs)
 
 
 @site.route('/trn/')
