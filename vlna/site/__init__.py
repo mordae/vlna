@@ -4,13 +4,15 @@
 from os import urandom, environ
 from os.path import realpath
 
-from flask import Flask, request, render_template
+from flask import Flask, request, g, render_template
 from flask_menu import Menu, current_menu, register_menu
 from flask_babel import Babel, lazy_gettext as _
 
 from sqlsoup import SQLSoup
 
 from logging import getLogger, NullHandler
+
+from vlna.exn import InvalidUsage
 
 
 __all__ = ['site', 'db']
@@ -35,17 +37,28 @@ site.config.from_mapping({
 
 if 'VLNA_SETTINGS' in environ:
     # Load rest from a configuration file specified in the environment.
-    # Set by the --config option when run using the bin/vlna.
+    # Set by the --config option when run using the `vlnad` command.
     site.config.from_envvar('VLNA_SETTINGS')
 
-# Make sure we use absolute path to the data directory.
+# Make sure to use absolute path to the data directory.
 site.config['DATA_PATH'] = realpath(site.config['DATA_PATH'])
 
-# Initialize the automatic menu generation.
-menu = Menu(site)
-
+#
 # Initialize the l18n module.
+#
+# See the translations/ directory located alongside this file for strings
+# to translate. Run `make lang` to update the translation files.
+#
 babel = Babel(site)
+
+#
+# Initialize the automatic menu generation.
+#
+# Decorators on particular endpoints provide the actual menu structure
+# the base template then makes use of. Make sure to use `lazy_gettext`
+# when defining the menu labels so that all works correctly.
+#
+menu = Menu(site)
 
 
 @site.template_global('get_locale')
@@ -100,15 +113,35 @@ def inject_env():
     return dict(site.config, current_menu=current_menu)
 
 
+@site.before_request
+def extract_auth_info():
+    """
+    Extract user identification from the ``X-Login`` request header and
+    store the corresponding user object in ``g.user``.
+    """
+
+    assert 'X-Login' in request.headers, \
+           'Your web server must pass along the X-Login header.'
+
+    login = request.headers['X-Login']
+    g.user = db.user.get(login)
+
+    if g.user is None:
+        msg = _('There is no user account for you, contact administrator.')
+        raise InvalidUsage(msg, data={'login': login})
+
+
 @site.route('/')
 @register_menu(site, 'sub', _('Subscriptions'))
-def home():
+def subscriptions():
     return render_template('sub.html')
 
 
 @site.route('/trn/')
 @register_menu(site, 'trn', _('Transmissions'))
-def sending():
+def transmissions():
+    campaigns = db.campaign.order_by(db.campaign.c.id.desc()).limit(50).all()
+
     return render_template('trn.html')
 
 
