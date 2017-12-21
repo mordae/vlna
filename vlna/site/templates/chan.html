@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{_('Channels')}}{% endblock %}
+
+{% block content %}
+<div class="container">
+ <h2>{{_('Channels')}}</h2>
+
+ <table class="table table-bordered table-hover">
+  <thead>
+   <tr>
+    <th>{{_('Channel Name')}}</th>
+    <th class="narrow">{{_('Public (channel)')}}</th>
+   </tr>
+  </thead>
+  <tbody>
+   {% for chan in chans %}
+   <tr>
+    <td><a href="/chan/edit/{{chan.name|urlencode}}"><i class="fa fa-bullhorn"></i> {{chan.name}}</a></td>
+    <td class="text-center">
+     {% if chan.public %}
+     <i class="fa fa-check"></i>
+     {% else %}
+     <i class="fa fa-times"></i>
+     {% endif %}
+    </td>
+   </tr>
+   {% else %}
+   <tr>
+    <td colspan="3">
+     <p class="text-muted text-center">{{_('No channels defined.')}}</p>
+    </td>
+   </tr>
+   {% endfor %}
+  </tbody>
+ </table>
+
+ <div class="text-right">
+  <a href="/chan/add" class="btn btn-success">{{_('Create')}}</a>
+ </div>
+</div>
+{% endblock %}
+
+<!-- vim:set ts=1 sw=1 et: -->

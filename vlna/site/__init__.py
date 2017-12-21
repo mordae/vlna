@@ -183,4 +183,14 @@ def transmissions():
     return render_template('trn.html')
 
 
+@site.route('/chan/')
+@register_menu(site, 'chan', _('Channels'),
+               visible_when=lambda: 'admin' in g.roles)
+@require_role('admin')
+def channels():
+    chans = db.channel.order_by('name').all()
+
+    return render_template('chan.html', chans=chans)
+
+
 # vim:set sw=4 ts=4 et:
