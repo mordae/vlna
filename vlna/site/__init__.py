@@ -7,9 +7,11 @@ from os.path import realpath
 from flask import Flask, request, g, render_template
 from flask_menu import Menu, current_menu, register_menu
 from flask_babel import Babel, lazy_gettext as _
+from werkzeug.exceptions import Forbidden
 
 from sqlsoup import SQLSoup
 
+from functools import wraps
 from logging import getLogger, NullHandler
 
 from vlna.exn import InvalidUsage
@@ -120,7 +122,8 @@ def inject_env():
 def extract_auth_info():
     """
     Extract user identification from the ``X-Login`` request header and
-    store the corresponding user object in ``g.user``.
+    store the corresponding user object in ``g.user``. Then parse the
+    ``X-Roles`` header and store user roles in ``g.roles``.
     """
 
     assert 'X-Login' in request.headers, \
@@ -132,6 +135,31 @@ def extract_auth_info():
     if g.user is None:
         msg = _('There is no user account for you, contact administrator.')
         raise InvalidUsage(msg, data={'login': login})
+
+    g.roles = set(request.headers.get('X-Roles', '').split(';'))
+    g.roles.discard('')
+
+
+def require_role(role):
+    """
+    Require that the user has specified role and deny them access otherwise.
+    """
+
+    def make_wrapper(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            if not role in g.roles:
+                raise Forbidden('RBAC Forbidden')
+
+            return fn(*args, **kwargs)
+
+        return wrapper
+    return make_wrapper
+
+
+@site.errorhandler(Forbidden.code)
+def forbidden(exn):
+    return render_template('forbidden.html')
 
 
 @site.route('/')
@@ -146,7 +174,9 @@ def subscriptions():
 
 
 @site.route('/trn/')
-@register_menu(site, 'trn', _('Transmissions'))
+@register_menu(site, 'trn', _('Transmissions'),
+               visible_when=lambda: 'sender' in g.roles)
+@require_role('sender')
 def transmissions():
     campaigns = db.campaign.order_by(db.campaign.c.id.desc()).limit(50).all()
 

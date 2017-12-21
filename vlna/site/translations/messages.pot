@@ -7,6 +7,9 @@ msgstr ""
 msgid "Transmissions"
 msgstr ""
 
+msgid "Channels"
+msgstr ""
+
 msgid "Toggle navigation"
 msgstr ""
 
@@ -16,7 +19,28 @@ msgstr ""
 msgid "Wave"
 msgstr ""
 
-msgid "Public"
+msgid "Channel Name"
+msgstr ""
+
+msgid "Public (channel)"
+msgstr ""
+
+msgid "No channels defined."
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Forbidden"
+msgstr ""
+
+msgid "You have not been authorized to access this page."
+msgstr ""
+
+msgid "Contact the administrator if you believe that this is a mistake."
+msgstr ""
+
+msgid "Public (channels)"
 msgstr ""
 
 msgid "None available."

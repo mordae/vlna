@@ -2,7 +2,9 @@
 	float: right;
 }
 
-.form-header {
+.main-header {
+	margin-top: 10px;
+	padding-bottom: 10px;
 	border-bottom: 1px solid #ddd;
 }
 
@@ -10,4 +12,13 @@
 	margin-top: 10px;
 	padding-top: 15px;
 	border-top: 1px solid #ddd;
+}
+
+form {
+	margin: 0px;
+	padding: 0px;
+}
+
+th.narrow {
+	width: 0px;
 }

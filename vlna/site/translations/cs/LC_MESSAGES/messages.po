@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-12-20 22:01+0100\n"
+"POT-Creation-Date: 2017-12-21 13:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -28,6 +28,9 @@ msgstr "Odběry"
 msgid "Transmissions"
 msgstr "Vysílání"
 
+msgid "Channels"
+msgstr "Kanály"
+
 msgid "Toggle navigation"
 msgstr "Přepnout navigaci"
 
@@ -37,7 +40,28 @@ msgstr "Pirátská"
 msgid "Wave"
 msgstr "Vlna"
 
-msgid "Public"
+msgid "Channel Name"
+msgstr "Název kanálu"
+
+msgid "Public (channel)"
+msgstr "Veřejný"
+
+msgid "No channels defined."
+msgstr "Zatím tu žádné kanály nejsou."
+
+msgid "Create"
+msgstr "Vytvořit"
+
+msgid "Forbidden"
+msgstr "Přístup odepřen"
+
+msgid "You have not been authorized to access this page."
+msgstr "Nemáte oprávnění pro přístup k této stránce."
+
+msgid "Contact the administrator if you believe that this is a mistake."
+msgstr "Pokud se domníváte, že se stala chyba, kontaktujte správce."
+
+msgid "Public (channels)"
 msgstr "Veřejné"
 
 msgid "None available."

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{_('Forbidden')}}{% endblock %}
+
+{% block content %}
+<div class="container">
+ <h2>{{_('Forbidden')}}</h2>
+ <p>
+  {{_('You have not been authorized to access this page.')}}<br/>
+  {{_('Contact the administrator if you believe that this is a mistake.')}}
+ </p>
+</div>
+{% endblock %}
+
+<!-- vim:set ts=1 sw=1 et: -->

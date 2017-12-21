@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-12-20 22:01+0100\n"
+"POT-Creation-Date: 2017-12-21 13:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -27,6 +27,9 @@ msgstr ""
 msgid "Transmissions"
 msgstr ""
 
+msgid "Channels"
+msgstr ""
+
 msgid "Toggle navigation"
 msgstr ""
 
@@ -36,8 +39,29 @@ msgstr ""
 msgid "Wave"
 msgstr ""
 
-msgid "Public"
+msgid "Channel Name"
 msgstr ""
+
+msgid "Public (channel)"
+msgstr "Public"
+
+msgid "No channels defined."
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Forbidden"
+msgstr ""
+
+msgid "You have not been authorized to access this page."
+msgstr ""
+
+msgid "Contact the administrator if you believe that this is a mistake."
+msgstr ""
+
+msgid "Public (channels)"
+msgstr "Public"
 
 msgid "None available."
 msgstr ""
