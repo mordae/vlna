@@ -218,22 +218,10 @@ CREATE TABLE opt_out (
 ALTER TABLE opt_out OWNER TO vlna;
 
 --
--- Name: sender_group; Type: TABLE; Schema: public; Owner: vlna
+-- Name: recipients; Type: VIEW; Schema: public; Owner: vlna
 --
 
-CREATE TABLE sender_group (
-    "group" character varying NOT NULL,
-    channel bigint NOT NULL
-);
-
-
-ALTER TABLE sender_group OWNER TO vlna;
-
---
--- Name: subscribers; Type: VIEW; Schema: public; Owner: vlna
---
-
-CREATE VIEW subscribers AS
+CREATE VIEW recipients AS
  SELECT b."user",
     b.email,
     b.display_name,
@@ -251,7 +239,19 @@ CREATE VIEW subscribers AS
   WHERE (b.public OR (gr."user" IS NOT NULL));
 
 
-ALTER TABLE subscribers OWNER TO vlna;
+ALTER TABLE recipients OWNER TO vlna;
+
+--
+-- Name: sender_group; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE sender_group (
+    "group" character varying NOT NULL,
+    channel bigint NOT NULL
+);
+
+
+ALTER TABLE sender_group OWNER TO vlna;
 
 --
 -- Name: campaign id; Type: DEFAULT; Schema: public; Owner: vlna

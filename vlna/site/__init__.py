@@ -94,7 +94,7 @@ def insert_lang_cookie(response):
 db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 
 # Specify primary keys for SQLSoup to allow us to work with views.
-map_view(db, 'subscribers', ['user', 'channel'])
+map_view(db, 'recipients', ['user', 'channel'])
 
 
 @site.teardown_request
@@ -166,9 +166,9 @@ def forbidden(exn):
 @site.route('/')
 @register_menu(site, 'sub', _('Subscriptions'))
 def subscriptions():
-    subs = db.subscribers \
+    subs = db.recipients \
             .filter_by(user=g.user.name) \
-            .order_by(db.subscribers.c.channel) \
+            .order_by(db.recipients.c.channel) \
             .all()
 
     return render_template('sub.html', subs=subs)
