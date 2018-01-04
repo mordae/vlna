@@ -15,16 +15,16 @@
     {% for sub in subs if sub.public %}
     <li class="checkbox">
      <label>
-      {% if sub.opt_in or (sub.group and not sub.opt_out) %}
-      <input type="checkbox" checked="checked"/>
+      {% if sub.active %}
+      <input type="checkbox" name="sub" value="{{sub.channel}}" checked="checked"/>
       {% else %}
-      <input type="checkbox"/>
+      <input type="checkbox" name="sub" value="{{sub.channel}}"/>
       {% endif %}
-      {{sub.channel}}
+      {{sub.name}}
      </label>
     </li>
     {% else %}
-    <p class="text-center text-muted">{{_('None available.')}}</p>
+    <p class="text-muted">{{_('None available.')}}</p>
     {% endfor %}
    </div>
 
@@ -34,16 +34,16 @@
     {% for sub in subs if not sub.public %}
     <li class="checkbox">
      <label>
-      {% if not sub.opt_out %}
-      <input type="checkbox" checked="checked"/>
+      {% if sub.active %}
+      <input type="checkbox" name="sub" value="{{sub.channel}}" checked="checked"/>
       {% else %}
-      <input type="checkbox"/>
+      <input type="checkbox" name="sub" value="{{sub.channel}}"/>
       {% endif %}
-      {{sub.channel}}
+      {{sub.name}}
      </label>
     </li>
     {% else %}
-    <p class="text-center text-muted">{{_('None available.')}}</p>
+    <p class="text-muted">{{_('None available.')}}</p>
     {% endfor %}
    </div>
   </div>

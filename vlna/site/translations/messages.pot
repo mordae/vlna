@@ -13,22 +13,7 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-msgid "Pirate"
-msgstr ""
-
-msgid "Wave"
-msgstr ""
-
-msgid "Channel Name"
-msgstr ""
-
-msgid "Public (channel)"
-msgstr ""
-
-msgid "No channels defined."
-msgstr ""
-
-msgid "Create"
+msgid "Pirate ∿ Wave"
 msgstr ""
 
 msgid "Forbidden"
@@ -50,5 +35,17 @@ msgid "Private"
 msgstr ""
 
 msgid "Save"
+msgstr ""
+
+msgid "Channel Name"
+msgstr ""
+
+msgid "Public (channel)"
+msgstr ""
+
+msgid "No channels defined."
+msgstr ""
+
+msgid "Create"
 msgstr ""
 

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.5
--- Dumped by pg_dump version 9.6.5
+-- Dumped from database version 9.6.6
+-- Dumped by pg_dump version 9.6.6
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,9 +43,67 @@ CREATE TYPE state AS ENUM (
 
 ALTER TYPE state OWNER TO vlna;
 
+--
+-- Name: channel_id_seq; Type: SEQUENCE; Schema: public; Owner: vlna
+--
+
+CREATE SEQUENCE channel_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE channel_id_seq OWNER TO vlna;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: channel; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE channel (
+    id bigint DEFAULT nextval('channel_id_seq'::regclass) NOT NULL,
+    name character varying NOT NULL,
+    public boolean NOT NULL,
+    template character varying NOT NULL
+);
+
+
+ALTER TABLE channel OWNER TO vlna;
+
+--
+-- Name: user; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE "user" (
+    name character varying NOT NULL,
+    email character varying NOT NULL,
+    display_name character varying NOT NULL
+);
+
+
+ALTER TABLE "user" OWNER TO vlna;
+
+--
+-- Name: base; Type: VIEW; Schema: public; Owner: vlna
+--
+
+CREATE VIEW base AS
+ SELECT u.name AS "user",
+    u.email,
+    u.display_name,
+    c.id AS channel,
+    c.name,
+    c.public
+   FROM "user" u,
+    channel c;
+
+
+ALTER TABLE base OWNER TO vlna;
 
 --
 -- Name: campaign; Type: TABLE; Schema: public; Owner: vlna
@@ -55,7 +113,7 @@ CREATE TABLE campaign (
     id bigint NOT NULL,
     name character varying NOT NULL,
     author character varying,
-    channel character varying NOT NULL,
+    channel bigint NOT NULL,
     state state DEFAULT 'draft'::state NOT NULL,
     start timestamp with time zone NOT NULL,
     content text NOT NULL
@@ -86,24 +144,12 @@ ALTER SEQUENCE campaign_id_seq OWNED BY campaign.id;
 
 
 --
--- Name: channel; Type: TABLE; Schema: public; Owner: vlna
---
-
-CREATE TABLE channel (
-    name character varying NOT NULL,
-    public boolean NOT NULL,
-    template character varying NOT NULL
-);
-
-
-ALTER TABLE channel OWNER TO vlna;
-
---
 -- Name: group; Type: TABLE; Schema: public; Owner: vlna
 --
 
 CREATE TABLE "group" (
-    name character varying NOT NULL
+    name character varying NOT NULL,
+    label character varying NOT NULL
 );
 
 
@@ -122,12 +168,38 @@ CREATE TABLE member (
 ALTER TABLE member OWNER TO vlna;
 
 --
+-- Name: recipient_group; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE recipient_group (
+    "group" character varying NOT NULL,
+    channel bigint NOT NULL
+);
+
+
+ALTER TABLE recipient_group OWNER TO vlna;
+
+--
+-- Name: group_recipients; Type: VIEW; Schema: public; Owner: vlna
+--
+
+CREATE VIEW group_recipients AS
+ SELECT DISTINCT u.name AS "user",
+    rg.channel
+   FROM (("user" u
+     JOIN member m ON (((m."user")::text = (u.name)::text)))
+     JOIN recipient_group rg ON (((rg."group")::text = (m."group")::text)));
+
+
+ALTER TABLE group_recipients OWNER TO vlna;
+
+--
 -- Name: opt_in; Type: TABLE; Schema: public; Owner: vlna
 --
 
 CREATE TABLE opt_in (
     "user" character varying NOT NULL,
-    channel character varying NOT NULL
+    channel bigint NOT NULL
 );
 
 
@@ -139,23 +211,11 @@ ALTER TABLE opt_in OWNER TO vlna;
 
 CREATE TABLE opt_out (
     "user" character varying NOT NULL,
-    channel character varying NOT NULL
+    channel bigint NOT NULL
 );
 
 
 ALTER TABLE opt_out OWNER TO vlna;
-
---
--- Name: recipient_group; Type: TABLE; Schema: public; Owner: vlna
---
-
-CREATE TABLE recipient_group (
-    "group" character varying NOT NULL,
-    channel character varying NOT NULL
-);
-
-
-ALTER TABLE recipient_group OWNER TO vlna;
 
 --
 -- Name: sender_group; Type: TABLE; Schema: public; Owner: vlna
@@ -163,63 +223,35 @@ ALTER TABLE recipient_group OWNER TO vlna;
 
 CREATE TABLE sender_group (
     "group" character varying NOT NULL,
-    channel character varying NOT NULL
+    channel bigint NOT NULL
 );
 
 
 ALTER TABLE sender_group OWNER TO vlna;
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: vlna
+-- Name: subscribers; Type: VIEW; Schema: public; Owner: vlna
 --
 
-CREATE TABLE "user" (
-    login character varying NOT NULL,
-    email character varying NOT NULL,
-    name character varying NOT NULL
-);
-
-
-ALTER TABLE "user" OWNER TO vlna;
-
---
--- Name: subscription; Type: VIEW; Schema: public; Owner: vlna
---
-
-CREATE VIEW subscription AS
- WITH base AS (
-         SELECT u.login AS "user",
-            c.name AS channel,
-            c.public
-           FROM "user" u,
-            channel c
-        ), group_subs AS (
-         SELECT DISTINCT m."user",
-            rg.channel
-           FROM (member m
-             JOIN recipient_group rg ON (((rg."group")::text = (m."group")::text)))
-        )
+CREATE VIEW subscribers AS
  SELECT b."user",
+    b.email,
+    b.display_name,
     b.channel,
+    b.name,
     b.public,
-    (i."user" IS NOT NULL) AS opt_in,
-    (g."user" IS NOT NULL) AS "group",
-    (o."user" IS NOT NULL) AS opt_out
+    (oi."user" IS NOT NULL) AS opt_in,
+    (gr."user" IS NOT NULL) AS "group",
+    (ou."user" IS NOT NULL) AS opt_out,
+    ((b.public AND (oi."user" IS NOT NULL)) OR ((gr."user" IS NOT NULL) AND (ou."user" IS NULL))) AS active
    FROM (((base b
-     LEFT JOIN opt_in i ON ((((i."user")::text = (b."user")::text) AND ((i.channel)::text = (b.channel)::text))))
-     LEFT JOIN group_subs g ON ((((g."user")::text = (b."user")::text) AND ((g.channel)::text = (b.channel)::text))))
-     LEFT JOIN opt_out o ON ((((o."user")::text = (b."user")::text) AND ((o.channel)::text = (b.channel)::text))))
-  WHERE (b.public OR (g."user" IS NOT NULL));
+     LEFT JOIN opt_in oi ON ((((oi."user")::text = (b."user")::text) AND (oi.channel = b.channel))))
+     LEFT JOIN group_recipients gr ON ((((gr."user")::text = (b."user")::text) AND (gr.channel = b.channel))))
+     LEFT JOIN opt_out ou ON ((((ou."user")::text = (b."user")::text) AND (ou.channel = b.channel))))
+  WHERE (b.public OR (gr."user" IS NOT NULL));
 
 
-ALTER TABLE subscription OWNER TO vlna;
-
---
--- Name: VIEW subscription; Type: COMMENT; Schema: public; Owner: vlna
---
-
-COMMENT ON VIEW subscription IS 'TODO: Inefficient, rewrite using joins only.';
-
+ALTER TABLE subscribers OWNER TO vlna;
 
 --
 -- Name: campaign id; Type: DEFAULT; Schema: public; Owner: vlna
@@ -241,7 +273,7 @@ ALTER TABLE ONLY campaign
 --
 
 ALTER TABLE ONLY channel
-    ADD CONSTRAINT channel_pkey PRIMARY KEY (name);
+    ADD CONSTRAINT channel_pkey PRIMARY KEY (id);
 
 
 --
@@ -297,7 +329,63 @@ ALTER TABLE ONLY sender_group
 --
 
 ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_pkey PRIMARY KEY (login);
+    ADD CONSTRAINT user_pkey PRIMARY KEY (name);
+
+
+--
+-- Name: channel_public_idx; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX channel_public_idx ON channel USING btree (public);
+
+
+--
+-- Name: fki_campaign_author_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_campaign_author_fkey ON campaign USING btree (author);
+
+
+--
+-- Name: fki_campaign_channel_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_campaign_channel_fkey ON campaign USING btree (channel);
+
+
+--
+-- Name: fki_member_group_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_member_group_fkey ON member USING btree ("group");
+
+
+--
+-- Name: fki_opt_in_channel_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_opt_in_channel_fkey ON opt_in USING btree (channel);
+
+
+--
+-- Name: fki_opt_out_channel_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_opt_out_channel_fkey ON opt_out USING btree (channel);
+
+
+--
+-- Name: fki_recipient_group_channel_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_recipient_group_channel_fkey ON recipient_group USING btree (channel);
+
+
+--
+-- Name: fki_sender_group_channel_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_sender_group_channel_fkey ON sender_group USING btree (channel);
 
 
 --
@@ -305,7 +393,7 @@ ALTER TABLE ONLY "user"
 --
 
 ALTER TABLE ONLY campaign
-    ADD CONSTRAINT campaign_author_fkey FOREIGN KEY (author) REFERENCES "user"(login) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT campaign_author_fkey FOREIGN KEY (author) REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -313,7 +401,7 @@ ALTER TABLE ONLY campaign
 --
 
 ALTER TABLE ONLY campaign
-    ADD CONSTRAINT campaign_channel_fkey FOREIGN KEY (channel) REFERENCES channel(name) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT campaign_channel_fkey FOREIGN KEY (channel) REFERENCES channel(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -329,7 +417,7 @@ ALTER TABLE ONLY member
 --
 
 ALTER TABLE ONLY member
-    ADD CONSTRAINT member_user_fkey FOREIGN KEY ("user") REFERENCES "user"(login) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT member_user_fkey FOREIGN KEY ("user") REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -337,7 +425,7 @@ ALTER TABLE ONLY member
 --
 
 ALTER TABLE ONLY opt_in
-    ADD CONSTRAINT opt_in_channel_fkey FOREIGN KEY (channel) REFERENCES channel(name) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT opt_in_channel_fkey FOREIGN KEY (channel) REFERENCES channel(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -345,7 +433,7 @@ ALTER TABLE ONLY opt_in
 --
 
 ALTER TABLE ONLY opt_in
-    ADD CONSTRAINT opt_in_user_fkey FOREIGN KEY ("user") REFERENCES "user"(login) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT opt_in_user_fkey FOREIGN KEY ("user") REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -353,7 +441,7 @@ ALTER TABLE ONLY opt_in
 --
 
 ALTER TABLE ONLY opt_out
-    ADD CONSTRAINT opt_out_channel_fkey FOREIGN KEY (channel) REFERENCES "group"(name) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT opt_out_channel_fkey FOREIGN KEY (channel) REFERENCES channel(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -361,7 +449,7 @@ ALTER TABLE ONLY opt_out
 --
 
 ALTER TABLE ONLY opt_out
-    ADD CONSTRAINT opt_out_user_fkey FOREIGN KEY ("user") REFERENCES "user"(login) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT opt_out_user_fkey FOREIGN KEY ("user") REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -369,7 +457,7 @@ ALTER TABLE ONLY opt_out
 --
 
 ALTER TABLE ONLY recipient_group
-    ADD CONSTRAINT recipient_group_channel_fkey FOREIGN KEY (channel) REFERENCES channel(name) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT recipient_group_channel_fkey FOREIGN KEY (channel) REFERENCES channel(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -385,7 +473,7 @@ ALTER TABLE ONLY recipient_group
 --
 
 ALTER TABLE ONLY sender_group
-    ADD CONSTRAINT sender_group_channel_fkey FOREIGN KEY (channel) REFERENCES channel(name) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT sender_group_channel_fkey FOREIGN KEY (channel) REFERENCES channel(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -400,9 +488,6 @@ ALTER TABLE ONLY sender_group
 -- Name: public; Type: ACL; Schema: -; Owner: vlna
 --
 
-REVOKE ALL ON SCHEMA public FROM postgres;
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO vlna;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 

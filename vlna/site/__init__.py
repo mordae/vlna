@@ -7,7 +7,7 @@ from os.path import realpath
 from flask import Flask, request, g, render_template
 from flask_menu import Menu, current_menu, register_menu
 from flask_babel import Babel, lazy_gettext as _
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 from sqlsoup import SQLSoup
 
@@ -93,7 +93,8 @@ def insert_lang_cookie(response):
 # Use SQLSoup for database access.
 db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 
-map_view(db, 'subscription', ['user', 'channel'])
+# Specify primary keys for SQLSoup to allow us to work with views.
+map_view(db, 'subscribers', ['user', 'channel'])
 
 
 @site.teardown_request
@@ -165,9 +166,9 @@ def forbidden(exn):
 @site.route('/')
 @register_menu(site, 'sub', _('Subscriptions'))
 def subscriptions():
-    subs = db.subscription \
-            .filter_by(user=g.user.login) \
-            .order_by('channel') \
+    subs = db.subscribers \
+            .filter_by(user=g.user.name) \
+            .order_by(db.subscribers.c.channel) \
             .all()
 
     return render_template('sub.html', subs=subs)
@@ -178,9 +179,12 @@ def subscriptions():
                visible_when=lambda: 'sender' in g.roles)
 @require_role('sender')
 def transmissions():
-    campaigns = db.campaign.order_by(db.campaign.c.id.desc()).limit(50).all()
+    trns = db.campaign \
+            .order_by(db.campaign.c.id.desc()) \
+            .limit(50) \
+            .all()
 
-    return render_template('trn.html')
+    return render_template('trn.html', trns=trns)
 
 
 @site.route('/chan/')
@@ -190,7 +194,18 @@ def transmissions():
 def channels():
     chans = db.channel.order_by('name').all()
 
-    return render_template('chan.html', chans=chans)
+    return render_template('chan/list.html', chans=chans)
+
+
+@site.route('/chan/edit/<int:id>')
+@require_role('admin')
+def edit_channel(id):
+    chan = db.channel.get(id)
+
+    if chan is None:
+        raise NotFound('No such channel')
+
+    return render_template('chan/edit.html', chan=chan)
 
 
 # vim:set sw=4 ts=4 et:

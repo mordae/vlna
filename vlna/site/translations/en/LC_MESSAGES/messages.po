@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-12-21 13:44+0100\n"
+"POT-Creation-Date: 2018-01-04 14:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -33,22 +33,7 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-msgid "Pirate"
-msgstr ""
-
-msgid "Wave"
-msgstr ""
-
-msgid "Channel Name"
-msgstr ""
-
-msgid "Public (channel)"
-msgstr "Public"
-
-msgid "No channels defined."
-msgstr ""
-
-msgid "Create"
+msgid "Pirate ∿ Wave"
 msgstr ""
 
 msgid "Forbidden"
@@ -70,5 +55,17 @@ msgid "Private"
 msgstr ""
 
 msgid "Save"
+msgstr ""
+
+msgid "Channel Name"
+msgstr ""
+
+msgid "Public (channel)"
+msgstr "Public"
+
+msgid "No channels defined."
+msgstr ""
+
+msgid "Create"
 msgstr ""
 

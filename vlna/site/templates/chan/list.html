@@ -16,7 +16,7 @@
   <tbody>
    {% for chan in chans %}
    <tr>
-    <td><a href="/chan/edit/{{chan.name|urlencode}}"><i class="fa fa-bullhorn"></i> {{chan.name}}</a></td>
+    <td><a href="/chan/edit/{{chan.id}}"><i class="fa fa-feed"></i> {{chan.name}}</a></td>
     <td class="text-center">
      {% if chan.public %}
      <i class="fa fa-check"></i>
