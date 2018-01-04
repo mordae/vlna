@@ -254,6 +254,25 @@ CREATE TABLE sender_group (
 ALTER TABLE sender_group OWNER TO vlna;
 
 --
+-- Name: senders; Type: VIEW; Schema: public; Owner: vlna
+--
+
+CREATE VIEW senders AS
+ SELECT DISTINCT u.name AS "user",
+    u.email,
+    u.display_name,
+    sg.channel,
+    c.name,
+    c.public
+   FROM ((("user" u
+     JOIN member m ON (((m."user")::text = (u.name)::text)))
+     JOIN sender_group sg ON (((sg."group")::text = (m."group")::text)))
+     JOIN channel c ON ((c.id = sg.channel)));
+
+
+ALTER TABLE senders OWNER TO vlna;
+
+--
 -- Name: campaign id; Type: DEFAULT; Schema: public; Owner: vlna
 --
 

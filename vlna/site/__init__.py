@@ -95,6 +95,7 @@ db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 
 # Specify primary keys for SQLSoup to allow us to work with views.
 map_view(db, 'recipients', ['user', 'channel'])
+map_view(db, 'senders', ['user', 'channel'])
 
 
 @site.teardown_request
