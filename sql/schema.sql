@@ -144,6 +144,43 @@ ALTER SEQUENCE campaign_id_seq OWNED BY campaign.id;
 
 
 --
+-- Name: event; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE event (
+    id bigint NOT NULL,
+    evid character varying NOT NULL,
+    ts timestamp with time zone NOT NULL,
+    event character varying NOT NULL,
+    message bigint NOT NULL,
+    "user" character varying
+);
+
+
+ALTER TABLE event OWNER TO vlna;
+
+--
+-- Name: event_id_seq; Type: SEQUENCE; Schema: public; Owner: vlna
+--
+
+CREATE SEQUENCE event_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE event_id_seq OWNER TO vlna;
+
+--
+-- Name: event_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: vlna
+--
+
+ALTER SEQUENCE event_id_seq OWNED BY event.id;
+
+
+--
 -- Name: group; Type: TABLE; Schema: public; Owner: vlna
 --
 
@@ -192,6 +229,40 @@ CREATE VIEW group_recipients AS
 
 
 ALTER TABLE group_recipients OWNER TO vlna;
+
+--
+-- Name: message; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE message (
+    id bigint NOT NULL,
+    msgid character varying NOT NULL,
+    campaign bigint NOT NULL
+);
+
+
+ALTER TABLE message OWNER TO vlna;
+
+--
+-- Name: message_id_seq; Type: SEQUENCE; Schema: public; Owner: vlna
+--
+
+CREATE SEQUENCE message_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE message_id_seq OWNER TO vlna;
+
+--
+-- Name: message_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: vlna
+--
+
+ALTER SEQUENCE message_id_seq OWNED BY message.id;
+
 
 --
 -- Name: opt_in; Type: TABLE; Schema: public; Owner: vlna
@@ -280,6 +351,20 @@ ALTER TABLE ONLY campaign ALTER COLUMN id SET DEFAULT nextval('campaign_id_seq':
 
 
 --
+-- Name: event id; Type: DEFAULT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY event ALTER COLUMN id SET DEFAULT nextval('event_id_seq'::regclass);
+
+
+--
+-- Name: message id; Type: DEFAULT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY message ALTER COLUMN id SET DEFAULT nextval('message_id_seq'::regclass);
+
+
+--
 -- Name: campaign campaign_pkey; Type: CONSTRAINT; Schema: public; Owner: vlna
 --
 
@@ -296,6 +381,14 @@ ALTER TABLE ONLY channel
 
 
 --
+-- Name: event event_pkey; Type: CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT event_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: group group_pkey; Type: CONSTRAINT; Schema: public; Owner: vlna
 --
 
@@ -309,6 +402,22 @@ ALTER TABLE ONLY "group"
 
 ALTER TABLE ONLY member
     ADD CONSTRAINT member_pkey PRIMARY KEY ("user", "group");
+
+
+--
+-- Name: message message_msgid_key; Type: CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY message
+    ADD CONSTRAINT message_msgid_key UNIQUE (msgid);
+
+
+--
+-- Name: message message_pkey; Type: CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY message
+    ADD CONSTRAINT message_pkey PRIMARY KEY (id);
 
 
 --
@@ -373,10 +482,31 @@ CREATE INDEX fki_campaign_channel_fkey ON campaign USING btree (channel);
 
 
 --
+-- Name: fki_event_message_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_event_message_fkey ON event USING btree (message);
+
+
+--
+-- Name: fki_event_user_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_event_user_fkey ON event USING btree ("user");
+
+
+--
 -- Name: fki_member_group_fkey; Type: INDEX; Schema: public; Owner: vlna
 --
 
 CREATE INDEX fki_member_group_fkey ON member USING btree ("group");
+
+
+--
+-- Name: fki_message_campaign_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_message_campaign_fkey ON message USING btree (campaign);
 
 
 --
@@ -424,6 +554,22 @@ ALTER TABLE ONLY campaign
 
 
 --
+-- Name: event event_message_fkey; Type: FK CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT event_message_fkey FOREIGN KEY (message) REFERENCES message(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: event event_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT event_user_fkey FOREIGN KEY ("user") REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
 -- Name: member member_group_fkey; Type: FK CONSTRAINT; Schema: public; Owner: vlna
 --
 
@@ -437,6 +583,14 @@ ALTER TABLE ONLY member
 
 ALTER TABLE ONLY member
     ADD CONSTRAINT member_user_fkey FOREIGN KEY ("user") REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: message message_campaign_fkey; Type: FK CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY message
+    ADD CONSTRAINT message_campaign_fkey FOREIGN KEY (campaign) REFERENCES campaign(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
