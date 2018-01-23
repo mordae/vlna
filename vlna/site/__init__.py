@@ -15,7 +15,7 @@ from functools import wraps
 from logging import getLogger, NullHandler
 
 from vlna.exn import InvalidUsage
-from vlna.util import map_view
+from vlna.util import map_view, make_csrf_token, csrf_token_valid
 
 
 __all__ = ['site', 'db']
@@ -76,6 +76,11 @@ def get_locale():
 
     locale = site.config['BABEL_DEFAULT_LOCALE']
     return request.cookies.get('lang', locale)
+
+
+@site.template_global('make_token')
+def make_token():
+    return make_csrf_token(site)
 
 
 @site.after_request
@@ -142,6 +147,15 @@ def extract_auth_info():
     g.roles.discard('')
 
 
+@site.before_request
+def csrf_protect():
+    if request.method == 'POST':
+        token = request.form.get('token', '')
+
+        if not csrf_token_valid(site, token):
+            raise InvalidUsage(_('Invalid CSRF token. Return and try again.'))
+
+
 def require_role(role):
     """
     Require that the user has specified role and deny them access otherwise.
@@ -162,6 +176,11 @@ def require_role(role):
 @site.errorhandler(Forbidden.code)
 def forbidden(exn):
     return render_template('forbidden.html')
+
+
+@site.errorhandler(InvalidUsage)
+def invalid_usage(exn):
+    return render_template('invalid-usage.html', exn=exn), exn.status
 
 
 @site.route('/')

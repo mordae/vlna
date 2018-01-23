@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-23 18:33+0100\n"
+"POT-Creation-Date: 2018-01-23 18:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -21,6 +21,9 @@ msgstr ""
 
 msgid "There is no user account for you, contact administrator."
 msgstr "Není tu pro Tebe účet, ozvi se správci."
+
+msgid "Invalid CSRF token. Return and try again."
+msgstr "Neplatný CSRF token. Vraťte se a zkuste to znovu."
 
 msgid "Subscriptions"
 msgstr "Odběry"
@@ -48,6 +51,9 @@ msgstr "Nemáte oprávnění pro přístup k této stránce."
 
 msgid "Contact the administrator if you believe that this is a mistake."
 msgstr "Pokud se domníváte, že se stala chyba, kontaktujte správce."
+
+msgid "Invalid Usage"
+msgstr "Neplatné užití"
 
 msgid "Public (channels)"
 msgstr "Veřejné"

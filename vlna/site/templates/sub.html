@@ -8,6 +8,8 @@
  <hr/>
 
  <form action="/sub/update" method="POST">
+  <input type="hidden" name="token" value="{{make_token()}}"/>
+
   <div class="row">
    <div class="col col-sm-6">
     <h3>{{_('Public (channels)')}}</h3>

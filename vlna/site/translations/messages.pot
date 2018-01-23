@@ -1,6 +1,9 @@
 msgid "There is no user account for you, contact administrator."
 msgstr ""
 
+msgid "Invalid CSRF token. Return and try again."
+msgstr ""
+
 msgid "Subscriptions"
 msgstr ""
 
@@ -26,6 +29,9 @@ msgid "You have not been authorized to access this page."
 msgstr ""
 
 msgid "Contact the administrator if you believe that this is a mistake."
+msgstr ""
+
+msgid "Invalid Usage"
 msgstr ""
 
 msgid "Public (channels)"
