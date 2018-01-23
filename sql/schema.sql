@@ -111,7 +111,7 @@ ALTER TABLE base OWNER TO vlna;
 
 CREATE TABLE campaign (
     id bigint NOT NULL,
-    name character varying NOT NULL,
+    subject character varying NOT NULL,
     author character varying,
     channel bigint NOT NULL,
     state state DEFAULT 'draft'::state NOT NULL,
