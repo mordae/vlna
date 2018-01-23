@@ -4,6 +4,9 @@ msgstr ""
 msgid "Subscriptions"
 msgstr ""
 
+msgid "Subscription preferences have been saved."
+msgstr ""
+
 msgid "Transmissions"
 msgstr ""
 

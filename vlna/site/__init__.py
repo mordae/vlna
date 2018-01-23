@@ -4,9 +4,9 @@
 from os import urandom, environ
 from os.path import realpath
 
-from flask import Flask, request, g, render_template
+from flask import Flask, request, g, render_template, redirect, flash
 from flask_menu import Menu, current_menu, register_menu
-from flask_babel import Babel, lazy_gettext as _
+from flask_babel import Babel, gettext, lazy_gettext as _
 from werkzeug.exceptions import Forbidden, NotFound
 
 from sqlsoup import SQLSoup
@@ -173,6 +173,52 @@ def subscriptions():
             .all()
 
     return render_template('sub.html', subs=subs)
+
+
+@site.route('/sub/update', methods=['POST'])
+def update_subscriptions():
+    # Extract the requested channel ids.
+    ids = request.form.getlist('sub', type=int)
+
+    # Go by the valid subscriptions to prevent users subscribing to
+    # something they are not actually allowed to receive.
+    subs = db.recipients \
+            .filter_by(user=g.user.name) \
+            .order_by(db.recipients.c.channel) \
+            .all()
+
+    for sub in subs:
+        if sub.channel in ids and not sub.active:
+            # User wants to newly subscribe to this channel.
+
+            if sub.group and sub.opt_out:
+                db.opt_out \
+                    .filter_by(user=g.user.name, channel=sub.channel) \
+                    .delete()
+
+            elif sub.public and not sub.opt_in:
+                db.opt_in.insert(user=g.user.name, channel=sub.channel)
+
+        elif sub.channel not in ids and sub.active:
+            # User no longer wants to be subscribed to this channel.
+
+            # Note that we use two independent if statements to clear
+            # both group-based subscriptions and opt-ins if user happens
+            # to have both, which is possible.
+
+            if sub.public and sub.opt_in:
+                db.opt_in \
+                    .filter_by(user=g.user.name, channel=sub.channel) \
+                    .delete()
+
+            if sub.group and not sub.opt_out:
+                db.opt_out.insert(user=g.user.name, channel=sub.channel)
+
+    db.commit()
+    flash(gettext('Subscription preferences have been saved.'), 'success')
+
+    return redirect('/')
+
 
 
 @site.route('/trn/')
