@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.6
--- Dumped by pg_dump version 9.6.6
+-- Dumped from database version 10.1
+-- Dumped by pg_dump version 10.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,6 +31,15 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
+-- Name: und-x-icu; Type: COLLATION; Schema: public; Owner: vlna
+--
+
+CREATE COLLATION "und-x-icu" (provider = icu, locale = 'und-x-icu');
+
+
+ALTER COLLATION "und-x-icu" OWNER TO vlna;
+
+--
 -- Name: state; Type: TYPE; Schema: public; Owner: vlna
 --
 
@@ -42,6 +51,72 @@ CREATE TYPE state AS ENUM (
 
 
 ALTER TYPE state OWNER TO vlna;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: user; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE "user" (
+    name character varying COLLATE public."und-x-icu" NOT NULL,
+    email character varying COLLATE public."und-x-icu" NOT NULL,
+    display_name character varying COLLATE public."und-x-icu" NOT NULL
+);
+
+
+ALTER TABLE "user" OWNER TO vlna;
+
+--
+-- Name: clear_user(); Type: FUNCTION; Schema: public; Owner: vlna
+--
+
+CREATE FUNCTION clear_user() RETURNS void
+    LANGUAGE sql
+    AS $$
+drop function if exists pg_temp.get_user();
+$$;
+
+
+ALTER FUNCTION public.clear_user() OWNER TO vlna;
+
+--
+-- Name: get_user(); Type: FUNCTION; Schema: public; Owner: vlna
+--
+
+CREATE FUNCTION get_user() RETURNS SETOF "user"
+    LANGUAGE plpgsql
+    AS $$
+begin
+   return query select * from pg_temp.get_user();
+exception when others then
+end;
+$$;
+
+
+ALTER FUNCTION public.get_user() OWNER TO vlna;
+
+--
+-- Name: set_user(character varying); Type: FUNCTION; Schema: public; Owner: vlna
+--
+
+CREATE FUNCTION set_user(name character varying) RETURNS void
+    LANGUAGE plpgsql
+    AS $_$begin
+    execute format($$
+        drop function if exists pg_temp.get_user();
+        create function pg_temp.get_user() returns setof "user" as $fn$
+            select * from "user" where "name" = %L;
+        $fn$ language sql;
+    $$, $1);
+end;
+
+$_$;
+
+
+ALTER FUNCTION public.set_user(name character varying) OWNER TO vlna;
 
 --
 -- Name: channel_id_seq; Type: SEQUENCE; Schema: public; Owner: vlna
@@ -57,36 +132,19 @@ CREATE SEQUENCE channel_id_seq
 
 ALTER TABLE channel_id_seq OWNER TO vlna;
 
-SET default_tablespace = '';
-
-SET default_with_oids = false;
-
 --
 -- Name: channel; Type: TABLE; Schema: public; Owner: vlna
 --
 
 CREATE TABLE channel (
     id bigint DEFAULT nextval('channel_id_seq'::regclass) NOT NULL,
-    name character varying NOT NULL,
+    name character varying COLLATE public."und-x-icu" NOT NULL,
     public boolean NOT NULL,
-    template character varying NOT NULL
+    template character varying COLLATE public."und-x-icu" NOT NULL
 );
 
 
 ALTER TABLE channel OWNER TO vlna;
-
---
--- Name: user; Type: TABLE; Schema: public; Owner: vlna
---
-
-CREATE TABLE "user" (
-    name character varying NOT NULL,
-    email character varying NOT NULL,
-    display_name character varying NOT NULL
-);
-
-
-ALTER TABLE "user" OWNER TO vlna;
 
 --
 -- Name: base; Type: VIEW; Schema: public; Owner: vlna
@@ -111,12 +169,12 @@ ALTER TABLE base OWNER TO vlna;
 
 CREATE TABLE campaign (
     id bigint NOT NULL,
-    subject character varying NOT NULL,
-    author character varying,
+    subject character varying COLLATE public."und-x-icu" NOT NULL,
+    author character varying COLLATE public."und-x-icu",
     channel bigint NOT NULL,
     state state DEFAULT 'draft'::state NOT NULL,
     start timestamp with time zone NOT NULL,
-    content text NOT NULL
+    content text COLLATE public."und-x-icu" NOT NULL
 );
 
 
@@ -149,11 +207,11 @@ ALTER SEQUENCE campaign_id_seq OWNED BY campaign.id;
 
 CREATE TABLE event (
     id bigint NOT NULL,
-    evid character varying NOT NULL,
+    evid character varying COLLATE public."und-x-icu" NOT NULL,
     ts timestamp with time zone NOT NULL,
-    event character varying NOT NULL,
+    event character varying COLLATE public."und-x-icu" NOT NULL,
     message bigint NOT NULL,
-    "user" character varying
+    "user" character varying COLLATE public."und-x-icu"
 );
 
 
@@ -185,8 +243,8 @@ ALTER SEQUENCE event_id_seq OWNED BY event.id;
 --
 
 CREATE TABLE "group" (
-    name character varying NOT NULL,
-    label character varying NOT NULL
+    name character varying COLLATE public."und-x-icu" NOT NULL,
+    label character varying COLLATE public."und-x-icu" NOT NULL
 );
 
 
@@ -197,8 +255,8 @@ ALTER TABLE "group" OWNER TO vlna;
 --
 
 CREATE TABLE member (
-    "user" character varying NOT NULL,
-    "group" character varying NOT NULL
+    "user" character varying COLLATE public."und-x-icu" NOT NULL,
+    "group" character varying COLLATE public."und-x-icu" NOT NULL
 );
 
 
@@ -209,7 +267,7 @@ ALTER TABLE member OWNER TO vlna;
 --
 
 CREATE TABLE recipient_group (
-    "group" character varying NOT NULL,
+    "group" character varying COLLATE public."und-x-icu" NOT NULL,
     channel bigint NOT NULL
 );
 
@@ -236,7 +294,7 @@ ALTER TABLE group_recipients OWNER TO vlna;
 
 CREATE TABLE message (
     id bigint NOT NULL,
-    msgid character varying NOT NULL,
+    msgid character varying COLLATE public."und-x-icu" NOT NULL,
     campaign bigint NOT NULL
 );
 
@@ -265,11 +323,40 @@ ALTER SEQUENCE message_id_seq OWNED BY message.id;
 
 
 --
+-- Name: sender_group; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE sender_group (
+    "group" character varying COLLATE public."und-x-icu" NOT NULL,
+    channel bigint NOT NULL
+);
+
+
+ALTER TABLE sender_group OWNER TO vlna;
+
+--
+-- Name: my_channels; Type: VIEW; Schema: public; Owner: vlna
+--
+
+CREATE VIEW my_channels WITH (security_barrier='false') AS
+ SELECT DISTINCT c.id AS channel,
+    c.name,
+    c.public
+   FROM (((get_user() u(name, email, display_name)
+     JOIN member m ON (((m."user")::text = (u.name)::text)))
+     JOIN sender_group sg ON (((sg."group")::text = (m."group")::text)))
+     JOIN channel c ON ((c.id = sg.channel)))
+  ORDER BY c.id;
+
+
+ALTER TABLE my_channels OWNER TO vlna;
+
+--
 -- Name: opt_in; Type: TABLE; Schema: public; Owner: vlna
 --
 
 CREATE TABLE opt_in (
-    "user" character varying NOT NULL,
+    "user" character varying COLLATE public."und-x-icu" NOT NULL,
     channel bigint NOT NULL
 );
 
@@ -281,7 +368,7 @@ ALTER TABLE opt_in OWNER TO vlna;
 --
 
 CREATE TABLE opt_out (
-    "user" character varying NOT NULL,
+    "user" character varying COLLATE public."und-x-icu" NOT NULL,
     channel bigint NOT NULL
 );
 
@@ -289,59 +376,27 @@ CREATE TABLE opt_out (
 ALTER TABLE opt_out OWNER TO vlna;
 
 --
--- Name: recipients; Type: VIEW; Schema: public; Owner: vlna
+-- Name: my_subscriptions; Type: VIEW; Schema: public; Owner: vlna
 --
 
-CREATE VIEW recipients AS
- SELECT b."user",
-    b.email,
-    b.display_name,
-    b.channel,
-    b.name,
-    b.public,
+CREATE VIEW my_subscriptions WITH (security_barrier='false') AS
+ SELECT c.id AS channel,
+    c.name,
+    c.public,
     (oi."user" IS NOT NULL) AS opt_in,
     (gr."user" IS NOT NULL) AS "group",
     (ou."user" IS NOT NULL) AS opt_out,
-    ((b.public AND (oi."user" IS NOT NULL)) OR ((gr."user" IS NOT NULL) AND (ou."user" IS NULL))) AS active
-   FROM (((base b
-     LEFT JOIN opt_in oi ON ((((oi."user")::text = (b."user")::text) AND (oi.channel = b.channel))))
-     LEFT JOIN group_recipients gr ON ((((gr."user")::text = (b."user")::text) AND (gr.channel = b.channel))))
-     LEFT JOIN opt_out ou ON ((((ou."user")::text = (b."user")::text) AND (ou.channel = b.channel))))
-  WHERE (b.public OR (gr."user" IS NOT NULL));
+    ((c.public AND (oi."user" IS NOT NULL)) OR ((gr."user" IS NOT NULL) AND (ou."user" IS NULL))) AS active
+   FROM ((((channel c
+     JOIN get_user() u(name, email, display_name) ON ((1 = 1)))
+     LEFT JOIN opt_in oi ON ((((oi."user")::text = (u.name)::text) AND (oi.channel = c.id))))
+     LEFT JOIN group_recipients gr ON ((((gr."user")::text = (u.name)::text) AND (gr.channel = c.id))))
+     LEFT JOIN opt_out ou ON ((((ou."user")::text = (u.name)::text) AND (ou.channel = c.id))))
+  WHERE (c.public OR (gr."user" IS NOT NULL))
+  ORDER BY c.id;
 
 
-ALTER TABLE recipients OWNER TO vlna;
-
---
--- Name: sender_group; Type: TABLE; Schema: public; Owner: vlna
---
-
-CREATE TABLE sender_group (
-    "group" character varying NOT NULL,
-    channel bigint NOT NULL
-);
-
-
-ALTER TABLE sender_group OWNER TO vlna;
-
---
--- Name: senders; Type: VIEW; Schema: public; Owner: vlna
---
-
-CREATE VIEW senders AS
- SELECT DISTINCT u.name AS "user",
-    u.email,
-    u.display_name,
-    sg.channel,
-    c.name,
-    c.public
-   FROM ((("user" u
-     JOIN member m ON (((m."user")::text = (u.name)::text)))
-     JOIN sender_group sg ON (((sg."group")::text = (m."group")::text)))
-     JOIN channel c ON ((c.id = sg.channel)));
-
-
-ALTER TABLE senders OWNER TO vlna;
+ALTER TABLE my_subscriptions OWNER TO vlna;
 
 --
 -- Name: campaign id; Type: DEFAULT; Schema: public; Owner: vlna
@@ -655,13 +710,6 @@ ALTER TABLE ONLY sender_group
 
 ALTER TABLE ONLY sender_group
     ADD CONSTRAINT sender_group_group_fkey FOREIGN KEY ("group") REFERENCES "group"(name) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: vlna
---
-
-GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --

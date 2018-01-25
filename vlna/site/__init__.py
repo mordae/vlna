@@ -10,6 +10,7 @@ from flask_babel import Babel, gettext, lazy_gettext as _
 from werkzeug.exceptions import Forbidden, NotFound
 
 from sqlsoup import SQLSoup
+from sqlalchemy import text
 
 from functools import wraps
 from logging import getLogger, NullHandler
@@ -99,8 +100,8 @@ def insert_lang_cookie(response):
 db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 
 # Specify primary keys for SQLSoup to allow us to work with views.
-map_view(db, 'recipients', ['user', 'channel'])
-map_view(db, 'senders', ['user', 'channel'])
+map_view(db, 'my_subscriptions', ['channel'])
+map_view(db, 'my_channels', ['channel'])
 
 
 @site.teardown_request
@@ -142,6 +143,9 @@ def extract_auth_info():
     if g.user is None:
         msg = _('There is no user account for you, contact administrator.')
         raise InvalidUsage(msg, data={'login': login})
+
+    r = db.connection() \
+        .execute(text('select set_user(:name)'), name=login)
 
     g.roles = set(request.headers.get('X-Roles', '').split(';'))
     g.roles.discard('')
@@ -186,10 +190,7 @@ def invalid_usage(exn):
 @site.route('/')
 @register_menu(site, 'sub', _('Subscriptions'))
 def subscriptions():
-    subs = db.recipients \
-            .filter_by(user=g.user.name) \
-            .order_by(db.recipients.c.channel) \
-            .all()
+    subs = db.my_subscriptions.all()
 
     return render_template('sub.html', subs=subs)
 
@@ -201,10 +202,7 @@ def update_subscriptions():
 
     # Go by the valid subscriptions to prevent users subscribing to
     # something they are not actually allowed to receive.
-    subs = db.recipients \
-            .filter_by(user=g.user.name) \
-            .order_by(db.recipients.c.channel) \
-            .all()
+    subs = db.my_subscriptions.all()
 
     for sub in subs:
         if sub.channel in ids and not sub.active:
