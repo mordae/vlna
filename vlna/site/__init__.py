@@ -100,8 +100,8 @@ def insert_lang_cookie(response):
 db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 
 # Specify primary keys for SQLSoup to allow us to work with views.
-map_view(db, 'my_subscriptions', ['channel'])
-map_view(db, 'my_channels', ['channel'])
+map_view(db, 'my_subscriptions', ['id'])
+map_view(db, 'my_channels', ['id'])
 
 # Specify automatic row relations.
 db.campaign.relate('Author', db.user)
@@ -209,18 +209,18 @@ def update_subscriptions():
     subs = db.my_subscriptions.all()
 
     for sub in subs:
-        if sub.channel in ids and not sub.active:
+        if sub.id in ids and not sub.active:
             # User wants to newly subscribe to this channel.
 
             if sub.group and sub.opt_out:
                 db.opt_out \
-                    .filter_by(user=g.user.name, channel=sub.channel) \
+                    .filter_by(user=g.user.name, channel=sub.id) \
                     .delete()
 
             elif sub.public and not sub.opt_in:
-                db.opt_in.insert(user=g.user.name, channel=sub.channel)
+                db.opt_in.insert(user=g.user.name, channel=sub.id)
 
-        elif sub.channel not in ids and sub.active:
+        elif sub.id not in ids and sub.active:
             # User no longer wants to be subscribed to this channel.
 
             # Note that we use two independent if statements to clear
@@ -229,11 +229,11 @@ def update_subscriptions():
 
             if sub.public and sub.opt_in:
                 db.opt_in \
-                    .filter_by(user=g.user.name, channel=sub.channel) \
+                    .filter_by(user=g.user.name, channel=sub.id) \
                     .delete()
 
             if sub.group and not sub.opt_out:
-                db.opt_out.insert(user=g.user.name, channel=sub.channel)
+                db.opt_out.insert(user=g.user.name, channel=sub.id)
 
     db.commit()
     flash(gettext('Subscription preferences have been saved.'), 'success')

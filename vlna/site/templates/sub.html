@@ -18,9 +18,9 @@
     <li class="checkbox">
      <label>
       {% if sub.active %}
-      <input type="checkbox" name="sub" value="{{sub.channel}}" checked="checked"/>
+      <input type="checkbox" name="sub" value="{{sub.id}}" checked="checked"/>
       {% else %}
-      <input type="checkbox" name="sub" value="{{sub.channel}}"/>
+      <input type="checkbox" name="sub" value="{{sub.id}}"/>
       {% endif %}
       {{sub.name}}
      </label>
@@ -37,9 +37,9 @@
     <li class="checkbox">
      <label>
       {% if sub.active %}
-      <input type="checkbox" name="sub" value="{{sub.channel}}" checked="checked"/>
+      <input type="checkbox" name="sub" value="{{sub.id}}" checked="checked"/>
       {% else %}
-      <input type="checkbox" name="sub" value="{{sub.channel}}"/>
+      <input type="checkbox" name="sub" value="{{sub.id}}"/>
       {% endif %}
       {{sub.name}}
      </label>

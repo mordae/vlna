@@ -338,10 +338,11 @@ ALTER TABLE sender_group OWNER TO vlna;
 -- Name: my_channels; Type: VIEW; Schema: public; Owner: vlna
 --
 
-CREATE VIEW my_channels WITH (security_barrier='false') AS
- SELECT DISTINCT c.id AS channel,
+CREATE VIEW my_channels AS
+ SELECT DISTINCT c.id,
     c.name,
-    c.public
+    c.public,
+    c.template
    FROM (((get_user() u(name, email, display_name)
      JOIN member m ON (((m."user")::text = (u.name)::text)))
      JOIN sender_group sg ON (((sg."group")::text = (m."group")::text)))
@@ -379,10 +380,11 @@ ALTER TABLE opt_out OWNER TO vlna;
 -- Name: my_subscriptions; Type: VIEW; Schema: public; Owner: vlna
 --
 
-CREATE VIEW my_subscriptions WITH (security_barrier='false') AS
- SELECT c.id AS channel,
+CREATE VIEW my_subscriptions AS
+ SELECT c.id,
     c.name,
     c.public,
+    c.template,
     (oi."user" IS NOT NULL) AS opt_in,
     (gr."user" IS NOT NULL) AS "group",
     (ou."user" IS NOT NULL) AS opt_out,
