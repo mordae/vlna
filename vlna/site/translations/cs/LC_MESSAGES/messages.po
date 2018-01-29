@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-23 18:53+0100\n"
+"POT-Creation-Date: 2018-01-29 14:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -67,6 +67,9 @@ msgstr "Soukromé"
 msgid "Save"
 msgstr "Uložit"
 
+msgid "Create"
+msgstr "Vytvořit"
+
 msgid "Channel Name"
 msgstr "Název kanálu"
 
@@ -76,6 +79,33 @@ msgstr "Veřejný"
 msgid "No channels defined."
 msgstr "Zatím tu žádné kanály nejsou."
 
-msgid "Create"
-msgstr "Vytvořit"
+msgid "Subject"
+msgstr "Předmět"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Channel"
+msgstr "Kanál"
+
+msgid "State"
+msgstr "Stav"
+
+msgid "Unfinished"
+msgstr "Rozpracované"
+
+msgid "Scheduled at "
+msgstr "Naplánované na "
+
+msgid "Sent at "
+msgstr "Odeslané v "
+
+msgid "No transmissions."
+msgstr "Žádná vysílání."
+
+msgid "More"
+msgstr "Více"
+
+msgid "Transmissions by Channel"
+msgstr "Vysílání po kanálech"
 

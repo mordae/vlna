@@ -103,6 +103,10 @@ db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 map_view(db, 'my_subscriptions', ['channel'])
 map_view(db, 'my_channels', ['channel'])
 
+# Specify automatic row relations.
+db.campaign.relate('Author', db.user)
+db.campaign.relate('Channel', db.channel)
+
 
 @site.teardown_request
 def teardown_request(exn=None):
@@ -245,10 +249,12 @@ def update_subscriptions():
 def transmissions():
     trns = db.campaign \
             .order_by(db.campaign.c.id.desc()) \
-            .limit(50) \
+            .limit(10) \
             .all()
 
-    return render_template('trn.html', trns=trns)
+    chans = db.my_channels.order_by('name').all()
+
+    return render_template('trn/list.html', trns=trns, chans=chans)
 
 
 @site.route('/chan/')

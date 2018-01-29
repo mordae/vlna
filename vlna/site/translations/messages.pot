@@ -46,6 +46,9 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Create"
+msgstr ""
+
 msgid "Channel Name"
 msgstr ""
 
@@ -55,6 +58,33 @@ msgstr ""
 msgid "No channels defined."
 msgstr ""
 
-msgid "Create"
+msgid "Subject"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Channel"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Unfinished"
+msgstr ""
+
+msgid "Scheduled at "
+msgstr ""
+
+msgid "Sent at "
+msgstr ""
+
+msgid "No transmissions."
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "Transmissions by Channel"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-23 18:53+0100\n"
+"POT-Creation-Date: 2018-01-29 14:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -66,6 +66,9 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Create"
+msgstr ""
+
 msgid "Channel Name"
 msgstr ""
 
@@ -75,6 +78,33 @@ msgstr "Public"
 msgid "No channels defined."
 msgstr ""
 
-msgid "Create"
+msgid "Subject"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Channel"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Unfinished"
+msgstr ""
+
+msgid "Scheduled at "
+msgstr ""
+
+msgid "Sent at "
+msgstr ""
+
+msgid "No transmissions."
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "Transmissions by Channel"
 msgstr ""
 
