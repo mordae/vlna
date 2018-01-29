@@ -88,3 +88,6 @@ msgstr ""
 msgid "Transmissions by Channel"
 msgstr ""
 
+msgid "No channels accessible. Sorry."
+msgstr ""
+

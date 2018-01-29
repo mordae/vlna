@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-29 14:34+0100\n"
+"POT-Creation-Date: 2018-01-29 16:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -108,4 +108,7 @@ msgstr "Více"
 
 msgid "Transmissions by Channel"
 msgstr "Vysílání po kanálech"
+
+msgid "No channels accessible. Sorry."
+msgstr "Žádné kanály nejsou přístupné, promiň."
 

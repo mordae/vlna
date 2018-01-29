@@ -102,10 +102,19 @@ db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 # Specify primary keys for SQLSoup to allow us to work with views.
 map_view(db, 'my_subscriptions', ['id'])
 map_view(db, 'my_channels', ['id'])
+map_view(db, 'my_campaigns', ['id'])
 
 # Specify automatic row relations.
 db.campaign.relate('Author', db.user)
 db.campaign.relate('Channel', db.channel)
+
+db.my_campaigns.relate('Author', db.user,
+    primaryjoin=(db.user.c.name == db.my_campaigns.c.author),
+    foreign_keys=[db.my_campaigns.c.author])
+
+db.my_campaigns.relate('Channel', db.channel,
+    primaryjoin=(db.channel.c.id == db.my_campaigns.c.channel),
+    foreign_keys=[db.my_campaigns.c.channel])
 
 
 @site.teardown_request
@@ -247,8 +256,8 @@ def update_subscriptions():
                visible_when=lambda: 'sender' in g.roles)
 @require_role('sender')
 def transmissions():
-    trns = db.campaign \
-            .order_by(db.campaign.c.id.desc()) \
+    trns = db.my_campaigns \
+            .order_by(db.my_campaigns.c.id.desc()) \
             .limit(10) \
             .all()
 

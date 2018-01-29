@@ -353,6 +353,24 @@ CREATE VIEW my_channels AS
 ALTER TABLE my_channels OWNER TO vlna;
 
 --
+-- Name: my_campaigns; Type: VIEW; Schema: public; Owner: vlna
+--
+
+CREATE VIEW my_campaigns WITH (security_barrier='false') AS
+ SELECT ca.id,
+    ca.subject,
+    ca.author,
+    ca.channel,
+    ca.state,
+    ca.start,
+    ca.content
+   FROM (campaign ca
+     JOIN my_channels ch ON ((ch.id = ca.channel)));
+
+
+ALTER TABLE my_campaigns OWNER TO vlna;
+
+--
 -- Name: opt_in; Type: TABLE; Schema: public; Owner: vlna
 --
 

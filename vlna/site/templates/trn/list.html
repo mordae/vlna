@@ -59,6 +59,8 @@
   <div class="lentil">
    <a href="/trn/chan/{{chan.id}}/"><i class="fa fa-feed"></i> {{chan.name}}</a>
   </div>
+  {% else %}
+  <p>{{_('No channels accessible. Sorry.')}}</p>
   {% endfor %}
  </div>
 </div>
