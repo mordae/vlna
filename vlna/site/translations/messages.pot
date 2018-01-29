@@ -58,13 +58,13 @@ msgstr ""
 msgid "No channels defined."
 msgstr ""
 
+msgid "History"
+msgstr ""
+
 msgid "Subject"
 msgstr ""
 
 msgid "Author"
-msgstr ""
-
-msgid "Channel"
 msgstr ""
 
 msgid "State"
@@ -80,6 +80,12 @@ msgid "Sent at "
 msgstr ""
 
 msgid "No transmissions."
+msgstr ""
+
+msgid "Transmissions History"
+msgstr ""
+
+msgid "Channel"
 msgstr ""
 
 msgid "More"

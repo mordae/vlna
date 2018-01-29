@@ -266,6 +266,36 @@ def transmissions():
     return render_template('trn/list.html', trns=trns, chans=chans)
 
 
+@site.route('/trn/chan/<int:id>/')
+@require_role('sender')
+def transmissions_on_channel(id):
+    chan = db.my_channels.get(id)
+
+    if chan is None:
+        raise NotFound('No such channel')
+
+    # TODO: Implement paging and search, probably using DataTables.
+
+    trns = db.my_campaigns \
+            .filter_by(channel=id) \
+            .order_by(db.my_campaigns.c.id.desc()) \
+            .all()
+
+    return render_template('trn/chan-list.html', chan=chan, trns=trns)
+
+
+@site.route('/trn/all/')
+@require_role('sender')
+def transmissions_all():
+    # TODO: Implement paging and search, probably using DataTables.
+
+    trns = db.my_campaigns \
+            .order_by(db.my_campaigns.c.id.desc()) \
+            .all()
+
+    return render_template('trn/full-list.html', trns=trns)
+
+
 @site.route('/chan/')
 @register_menu(site, 'chan', _('Channels'),
                visible_when=lambda: 'admin' in g.roles)

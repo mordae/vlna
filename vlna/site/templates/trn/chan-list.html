@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{chan.name}} ({{_('History')}}){% endblock %}
+
+{% block content %}
+<div class="container">
+ <h2>
+  <i class="fa fa-feed"></i> {{chan.name}} ({{_('History')}})
+  <a href="/trn/add?channel={{chan.id}}" class="btn btn-success pull-right">{{_('Create')}}</a>
+ </h2>
+
+ <table class="table table-bordered table-hover">
+  <thead>
+   <tr>
+    <th>{{_('Subject')}}</th>
+    <th>{{_('Author')}}</th>
+    <th>{{_('State')}}</th>
+   </tr>
+  </thead>
+  <tbody>
+   {% for trn in trns %}
+   <tr class="trn-{{trn.state}}">
+    <td><a href="/trn/edit/{{trn.id}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
+    <td>{{trn.Author.display_name}}</td>
+    <td>
+     {% if trn.state == 'draft' %}
+     {{_('Unfinished')}}
+     {% elif trn.state == 'pending' %}
+     {{_('Scheduled at ')}} / {{trn.start|datetimeformat}}
+     {% elif trn.state == 'sent' %}
+     {{_('Sent at ')}} {{trn.start|datetimeformat}}
+     {% endif %}
+    </td>
+    </td>
+   </tr>
+   {% else %}
+   <tr>
+    <td colspan="3">
+     <p class="text-muted text-center">{{_('No transmissions.')}}</p>
+    </td>
+   </tr>
+   {% endfor %}
+  </tbody>
+ </table>
+</div>
+{% endblock %}
+
+<!-- vim:set ts=1 sw=1 et: -->
