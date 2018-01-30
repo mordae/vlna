@@ -272,7 +272,7 @@ def transmissions_on_channel(id):
     chan = db.my_channels.get(id)
 
     if chan is None:
-        raise NotFound('No such channel')
+        raise NotFound(gettext('No such channel'))
 
     # TODO: Implement paging and search, probably using DataTables.
 
@@ -296,6 +296,22 @@ def transmissions_all():
     return render_template('trn/full-list.html', trns=trns)
 
 
+@site.route('/trn/edit/<int:id>')
+@require_role('sender')
+def transmission_edit(id):
+    trn = db.my_campaigns.get(id)
+
+    if trn is None:
+        raise NotFound(gettext('No such transmission'))
+
+    if trn.state == 'sent':
+        raise InvalidUsage(_('Cannot edit sent transmission.'))
+
+    chans = db.my_channels.order_by('name').all()
+
+    return render_template('trn/edit.html', trn=trn, chans=chans)
+
+
 @site.route('/chan/')
 @register_menu(site, 'chan', _('Channels'),
                visible_when=lambda: 'admin' in g.roles)
@@ -312,7 +328,7 @@ def edit_channel(id):
     chan = db.channel.get(id)
 
     if chan is None:
-        raise NotFound('No such channel')
+        raise NotFound(gettext('No such channel'))
 
     return render_template('chan/edit.html', chan=chan)
 

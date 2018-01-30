@@ -21,7 +21,11 @@
   <tbody>
    {% for trn in trns %}
    <tr class="trn-{{trn.state}}">
+    {% if trn.state == 'sent' %}
+    <td><i class="fa fa-bullhorn"></i> {{trn.subject}}</td>
+    {% else %}
     <td><a href="/trn/edit/{{trn.id}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
+    {% endif %}
     <td>{{trn.Author.display_name}}</td>
     <td><a href="/trn/chan/{{trn.channel}}/"><i class="fa fa-feed"></i> {{trn.Channel.name}}</a></td>
     <td>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-29 16:48+0100\n"
+"POT-Creation-Date: 2018-01-30 18:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -33,6 +33,15 @@ msgstr "Nastavení odběrů bylo uloženo."
 
 msgid "Transmissions"
 msgstr "Vysílání"
+
+msgid "No such channel"
+msgstr "Takový kanál neexistuje"
+
+msgid "No such transmission"
+msgstr "Takové vysílání neexistuje"
+
+msgid "Cannot edit sent transmission."
+msgstr "Není možné měnit skončená vysílání."
 
 msgid "Channels"
 msgstr "Kanály"
@@ -103,11 +112,29 @@ msgstr "Odeslané v "
 msgid "No transmissions."
 msgstr "Žádná vysílání."
 
-msgid "Transmissions History"
-msgstr "History vysílání"
+msgid "{} (Edit)"
+msgstr "{} (Změny)"
+
+msgid "Edit Transmission"
+msgstr "Úprava vysílání"
 
 msgid "Channel"
 msgstr "Kanál"
+
+msgid "Draft"
+msgstr "Rozpracované"
+
+msgid "Pending"
+msgstr "Čekající"
+
+msgid "When to send"
+msgstr "Kdy vyslat"
+
+msgid "Content"
+msgstr "Obsah"
+
+msgid "Transmissions History"
+msgstr "History vysílání"
 
 msgid "More"
 msgstr "Více"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-29 16:48+0100\n"
+"POT-Creation-Date: 2018-01-30 18:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -31,6 +31,15 @@ msgid "Subscription preferences have been saved."
 msgstr ""
 
 msgid "Transmissions"
+msgstr ""
+
+msgid "No such channel"
+msgstr ""
+
+msgid "No such transmission"
+msgstr ""
+
+msgid "Cannot edit sent transmission."
 msgstr ""
 
 msgid "Channels"
@@ -102,10 +111,28 @@ msgstr ""
 msgid "No transmissions."
 msgstr ""
 
-msgid "Transmissions History"
+msgid "{} (Edit)"
+msgstr ""
+
+msgid "Edit Transmission"
 msgstr ""
 
 msgid "Channel"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "When to send"
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "Transmissions History"
 msgstr ""
 
 msgid "More"

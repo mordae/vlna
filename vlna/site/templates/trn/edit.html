@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{_('{} (Edit)').format(trn.subject)}}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" integrity="sha256-yMjaV542P+q1RnH6XByCPDfUFhmOafWbeLPmqKh11zo=" crossorigin="anonymous" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+ <h2>{{_('Edit Transmission')}}</h2>
+ <hr />
+
+ <form action="/trn/update/{{trn.id}}" method="POST">
+  <input type="hidden" name="token" value="{{make_token()}}"/>
+
+  <div class="row">
+   <div class="col col-md-6">
+    <div class="form-group">
+     <label for="subject">{{_('Subject')}}</label>
+     <input type="text"
+            class="form-control"
+            id="subject"
+            name="email"
+            value="{{trn.subject}}"
+            autocomplete="off"
+            required
+            />
+    </div>
+
+    <div class="form-group">
+     <label for="channel">{{_('Channel')}}</label>
+     <select class="form-control" id="channel" name="channel">
+      {% for chan in chans %}
+      {% if trn.channel == chan.id %}
+      <option value="{{chan.id}}" selected>{{chan.name}}</option>
+      {% else %}
+      <option value="{{chan.id}}">{{chan.name}}</option>
+      {% endif %}
+      {% endfor %}
+     </select>
+    </div>
+
+    <div class="form-group">
+     <label for="state">{{_('State')}}</label>
+     <select class="form-control" id="state" id="channel">
+      <option value="draft">{{_('Draft')}}</option>
+      <option value="pending">{{_('Pending')}}</option>
+     </select>
+    </div>
+
+    <div class="form-group">
+     <label for="start">{{_('When to send')}}</label>
+     <div class="input-group date" id="start-picker">
+      <input type="datetime-local"
+             class="form-control"
+             id="start"
+             name="start"
+             value="{{trn.start.strftime('%Y-%m-%d %H:%M:%S')}}"
+             autocomplete="off"
+             />
+      <span class="input-group-addon">
+       <i class="fa fa-calendar"></i>
+      </span>
+     </div>
+    </div>
+   </div>
+
+   <div class="col col-md-6">
+    <div class="form-group">
+     <label for="content">{{_('Content')}}</label>
+     <textarea rows="12" class="form-control" id="content" name="content">{{trn.content}}</textarea>
+    </div>
+   </div>
+  </div>
+
+  <hr />
+  <div class="form-group text-right">
+   <button type="submit" class="btn btn-primary">{{_('Save')}}</button>
+  </div>
+ </form>
+</div>
+{% endblock %}
+
+{% block tail %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment-with-locales.min.js" integrity="sha256-XWrGUqSiENmD8bL+BVeLl7iCfhs+pkPyIqrZQcS2Te8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" integrity="sha256-5YmaxAwMjIpMrVlK84Y/+NjCpKnFYa8bWWBbUHSBGfU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js" integrity="sha256-U//RSeH3TR3773Rk+1lAufJnRjEaG5LcdbvGV72kHEM=" crossorigin="anonymous"></script>
+
+<script>
+ $('#start-picker').datetimepicker({
+  "locale": "{{get_locale()}}",
+  "showTodayButton": true,
+  "format": "YYYY-MM-DD HH:mm:ss",
+ });
+
+$(function() {
+  var content = $('#content');
+  $('<div id="editor"></div>').insertBefore(content);
+
+  var editor = ace.edit('editor');
+
+  editor.session.setMode('ace/mode/markdown');
+  editor.session.setUseWrapMode(true);
+  editor.session.setValue(content.val());
+  editor.setOption('minLines', 18);
+  editor.setOption('maxLines', 32);
+
+  content.hide();
+  content.closest('form').submit(function() {
+   content.val(editor.session.getValue());
+  });
+ });
+</script>
+{% endblock %}
+
+<!-- vim:set ts=1 sw=1 et: -->
