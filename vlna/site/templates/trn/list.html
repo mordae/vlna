@@ -13,7 +13,6 @@
   <thead>
    <tr>
     <th>{{_('Subject')}}</th>
-    <th>{{_('Author')}}</th>
     <th>{{_('Channel')}}</th>
     <th>{{_('State')}}</th>
    </tr>
@@ -26,22 +25,19 @@
     {% else %}
     <td><a href="/trn/edit/{{trn.id}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
     {% endif %}
-    <td>{{trn.Author.display_name}}</td>
     <td><a href="/trn/chan/{{trn.channel}}/"><i class="fa fa-feed"></i> {{trn.Channel.name}}</a></td>
     <td>
      {% if trn.state == 'draft' %}
-     {{_('Unfinished')}}
-     {% elif trn.state == 'pending' %}
-     {{_('Scheduled at ')}} / {{trn.start|datetimeformat}}
+     {{_('Draft')}}
      {% elif trn.state == 'sent' %}
-     {{_('Sent at ')}} {{trn.start|datetimeformat}}
+     {{_('Sent')}}
      {% endif %}
     </td>
     </td>
    </tr>
    {% else %}
    <tr>
-    <td colspan="4">
+    <td colspan="3">
      <p class="text-muted text-center">{{_('No transmissions.')}}</p>
     </td>
    </tr>
@@ -49,7 +45,7 @@
   </tbody>
   <tfoot>
    <tr>
-    <td colspan="4" class="text-center">
+    <td colspan="3" class="text-center">
      <a href="/trn/all/">{{_('More')}}</a>
     </td>
    </tr>

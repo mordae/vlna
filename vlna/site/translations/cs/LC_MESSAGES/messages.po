@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-01-30 18:15+0100\n"
+"POT-Creation-Date: 2018-02-01 11:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: cs\n"
@@ -42,6 +42,15 @@ msgstr "Takové vysílání neexistuje"
 
 msgid "Cannot edit sent transmission."
 msgstr "Není možné měnit skončená vysílání."
+
+msgid "Invalid channel specified."
+msgstr "Uveden neplatný kanál."
+
+msgid "Trial message sent to {}."
+msgstr "Zkušební zpráva odeslána na {}."
+
+msgid "Modifications successfully saved."
+msgstr "Změny byly úspěšně uloženy."
 
 msgid "Channels"
 msgstr "Kanály"
@@ -94,20 +103,14 @@ msgstr "Historie"
 msgid "Subject"
 msgstr "Předmět"
 
-msgid "Author"
-msgstr "Autor"
-
 msgid "State"
 msgstr "Stav"
 
-msgid "Unfinished"
+msgid "Draft"
 msgstr "Rozpracované"
 
-msgid "Scheduled at "
-msgstr "Naplánované na "
-
-msgid "Sent at "
-msgstr "Odeslané v "
+msgid "Sent"
+msgstr "Odeslané"
 
 msgid "No transmissions."
 msgstr "Žádná vysílání."
@@ -115,23 +118,17 @@ msgstr "Žádná vysílání."
 msgid "{} (Edit)"
 msgstr "{} (Změny)"
 
-msgid "Edit Transmission"
-msgstr "Úprava vysílání"
-
 msgid "Channel"
 msgstr "Kanál"
 
-msgid "Draft"
-msgstr "Rozpracované"
-
-msgid "Pending"
-msgstr "Čekající"
-
-msgid "When to send"
-msgstr "Kdy vyslat"
-
 msgid "Content"
 msgstr "Obsah"
+
+msgid "Send Now"
+msgstr "Odeslat"
+
+msgid "Send Trial"
+msgstr "Odeslat zkušební"
 
 msgid "Transmissions History"
 msgstr "History vysílání"

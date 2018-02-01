@@ -22,6 +22,15 @@ msgstr ""
 msgid "Cannot edit sent transmission."
 msgstr ""
 
+msgid "Invalid channel specified."
+msgstr ""
+
+msgid "Trial message sent to {}."
+msgstr ""
+
+msgid "Modifications successfully saved."
+msgstr ""
+
 msgid "Channels"
 msgstr ""
 
@@ -73,19 +82,13 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-msgid "Author"
-msgstr ""
-
 msgid "State"
 msgstr ""
 
-msgid "Unfinished"
+msgid "Draft"
 msgstr ""
 
-msgid "Scheduled at "
-msgstr ""
-
-msgid "Sent at "
+msgid "Sent"
 msgstr ""
 
 msgid "No transmissions."
@@ -94,22 +97,16 @@ msgstr ""
 msgid "{} (Edit)"
 msgstr ""
 
-msgid "Edit Transmission"
-msgstr ""
-
 msgid "Channel"
 msgstr ""
 
-msgid "Draft"
-msgstr ""
-
-msgid "Pending"
-msgstr ""
-
-msgid "When to send"
-msgstr ""
-
 msgid "Content"
+msgstr ""
+
+msgid "Send Now"
+msgstr ""
+
+msgid "Send Trial"
 msgstr ""
 
 msgid "Transmissions History"

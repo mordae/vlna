@@ -4,6 +4,8 @@
 import os
 import click
 
+from os.path import realpath
+
 from aiohttp.web import Application, run_app
 from aiohttp_wsgi import WSGIHandler
 
@@ -31,7 +33,7 @@ pass_opts = click.make_pass_decorator(dict)
 @click.version_option('0.1.0')
 def cli(config, debug):
     # Load site & configuration.
-    os.environ['VLNA_SETTINGS'] = config
+    os.environ['VLNA_SETTINGS'] = realpath(config)
     from vlna.site import site
 
     # Enable debugging if specified on the commmand line.

@@ -40,17 +40,16 @@ CREATE COLLATION "und-x-icu" (provider = icu, locale = 'und-x-icu');
 ALTER COLLATION "und-x-icu" OWNER TO vlna;
 
 --
--- Name: state; Type: TYPE; Schema: public; Owner: vlna
+-- Name: campaign_state; Type: TYPE; Schema: public; Owner: vlna
 --
 
-CREATE TYPE state AS ENUM (
+CREATE TYPE campaign_state AS ENUM (
     'draft',
-    'pending',
     'sent'
 );
 
 
-ALTER TYPE state OWNER TO vlna;
+ALTER TYPE campaign_state OWNER TO vlna;
 
 SET default_tablespace = '';
 
@@ -170,10 +169,8 @@ ALTER TABLE base OWNER TO vlna;
 CREATE TABLE campaign (
     id bigint NOT NULL,
     subject character varying COLLATE public."und-x-icu" NOT NULL,
-    author character varying COLLATE public."und-x-icu",
     channel bigint NOT NULL,
-    state state DEFAULT 'draft'::state NOT NULL,
-    start timestamp with time zone NOT NULL,
+    state campaign_state DEFAULT 'draft'::campaign_state NOT NULL,
     content text COLLATE public."und-x-icu" NOT NULL
 );
 
@@ -356,13 +353,11 @@ ALTER TABLE my_channels OWNER TO vlna;
 -- Name: my_campaigns; Type: VIEW; Schema: public; Owner: vlna
 --
 
-CREATE VIEW my_campaigns WITH (security_barrier='false') AS
+CREATE VIEW my_campaigns AS
  SELECT ca.id,
     ca.subject,
-    ca.author,
     ca.channel,
     ca.state,
-    ca.start,
     ca.content
    FROM (campaign ca
      JOIN my_channels ch ON ((ch.id = ca.channel)));
@@ -543,13 +538,6 @@ CREATE INDEX channel_public_idx ON channel USING btree (public);
 
 
 --
--- Name: fki_campaign_author_fkey; Type: INDEX; Schema: public; Owner: vlna
---
-
-CREATE INDEX fki_campaign_author_fkey ON campaign USING btree (author);
-
-
---
 -- Name: fki_campaign_channel_fkey; Type: INDEX; Schema: public; Owner: vlna
 --
 
@@ -610,14 +598,6 @@ CREATE INDEX fki_recipient_group_channel_fkey ON recipient_group USING btree (ch
 --
 
 CREATE INDEX fki_sender_group_channel_fkey ON sender_group USING btree (channel);
-
-
---
--- Name: campaign campaign_author_fkey; Type: FK CONSTRAINT; Schema: public; Owner: vlna
---
-
-ALTER TABLE ONLY campaign
-    ADD CONSTRAINT campaign_author_fkey FOREIGN KEY (author) REFERENCES "user"(name) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --

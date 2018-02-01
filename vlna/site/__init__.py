@@ -4,7 +4,7 @@
 from os import urandom, environ
 from os.path import realpath
 
-from flask import Flask, request, g, render_template, redirect, flash
+from flask import Flask, request, g, render_template, redirect, flash, url_for
 from flask_menu import Menu, current_menu, register_menu
 from flask_babel import Babel, gettext, lazy_gettext as _
 from werkzeug.exceptions import Forbidden, NotFound
@@ -17,9 +17,10 @@ from logging import getLogger, NullHandler
 
 from vlna.exn import InvalidUsage
 from vlna.util import map_view, make_csrf_token, csrf_token_valid
+from vlna.mailgun import Mailgun
 
 
-__all__ = ['site', 'db']
+__all__ = ['site', 'db', 'mailer']
 
 
 log = getLogger(__name__)
@@ -37,6 +38,9 @@ site.config.from_mapping({
     'SQLSOUP_DATABASE_URI': 'postgresql://vlna:vlna@localhost/vlna',
     'MAX_CONTENT_LENGTH': 32 * 1024 * 1024,
     'DATA_PATH': 'data',
+    'MAILGUN_DOMAIN': 'your-domain.tld',
+    'MAILGUN_APIKEY': 'generate-some-key-please',
+    'MAILGUN_SENDER': 'sender@your-domain.tld',
 })
 
 if 'VLNA_SETTINGS' in environ:
@@ -63,6 +67,13 @@ babel = Babel(site)
 # when defining the menu labels so that all works correctly.
 #
 menu = Menu(site)
+
+#
+# Initialize the mailer backend.
+#
+mailer = Mailgun(site.config['MAILGUN_DOMAIN'],
+                 site.config['MAILGUN_APIKEY'],
+                 site.config['MAILGUN_SENDER'])
 
 
 @site.template_global('get_locale')
@@ -105,12 +116,7 @@ map_view(db, 'my_channels', ['id'])
 map_view(db, 'my_campaigns', ['id'])
 
 # Specify automatic row relations.
-db.campaign.relate('Author', db.user)
 db.campaign.relate('Channel', db.channel)
-
-db.my_campaigns.relate('Author', db.user,
-    primaryjoin=(db.user.c.name == db.my_campaigns.c.author),
-    foreign_keys=[db.my_campaigns.c.author])
 
 db.my_campaigns.relate('Channel', db.channel,
     primaryjoin=(db.channel.c.id == db.my_campaigns.c.channel),
@@ -310,6 +316,51 @@ def transmission_edit(id):
     chans = db.my_channels.order_by('name').all()
 
     return render_template('trn/edit.html', trn=trn, chans=chans)
+
+
+@site.route('/trn/update/<int:id>', methods=['POST'])
+@require_role('sender')
+def transmission_update(id):
+    trn = db.my_campaigns.get(id)
+
+    if trn is None:
+        raise NotFound(_('No such transmission'))
+
+    if trn.state == 'sent':
+        raise InvalidUsage(_('Cannot edit sent transmission.'))
+
+    action = request.form.get('action')
+    subject = request.form.get('subject', trn.subject)
+    channel = request.form.get('channel', trn.channel)
+    content = request.form.get('content', trn.content)
+
+    print(request.form)
+
+    chan = db.my_channels.get(request.form.get('channel'))
+
+    if chan is None:
+        raise InvalidUsage(_('Invalid channel specified.'), {
+            'channel': request.form.get('channel'),
+        })
+
+    if action == 'test':
+        mailer.send(trn.subject, g.user.email, trn.content)
+        msg = gettext('Trial message sent to {}.').format(g.user.email)
+        flash(msg, 'success')
+
+    elif action == 'save':
+        camp = db.campaign.get(id)
+        camp.subject = subject
+        camp.channel = channel
+        camp.content = content
+        db.commit()
+        flash(gettext('Modifications successfully saved.'), 'success')
+
+    else:
+        # TODO: Implement other action.
+        flash('Not yet implemented.', 'danger')
+
+    return redirect(url_for('transmission_edit', id=id))
 
 
 @site.route('/chan/')
