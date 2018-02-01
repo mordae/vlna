@@ -3,6 +3,7 @@
 
 from logging import getLogger, NullHandler
 from urllib.parse import urljoin
+from email.utils import formataddr
 
 from requests import get, post
 from simplejson import dumps
@@ -46,16 +47,22 @@ class Mailgun:
             raise MailgunError('Cannot parse.', {'response': r.text})
 
     def send(self, recipient, trn):
-        log.info('Test-Send {!r} to {!r}'.format(trn.subject, recipient))
+        return self.send_many([recipient], trn)
+
+    def send_many(self, recipients, trn):
+        tos = [formataddr((r.display_name, r.email))
+               for r in recipients]
+
+        rvs = {r.email: {} for r in recipients}
 
         return self.post('messages', data={
             'from': self.sender,
-            'to': recipient,
+            'to': ', '.join(tos),
             'subject': trn.subject,
             'text': trn.content,
             'html': render_html(trn),
             'o:testmode': 'yes' if self.testmode else 'no',
-            'recipient-variables': dumps({recipient: {}}),
+            'recipient-variables': dumps(rvs),
         })
 
 

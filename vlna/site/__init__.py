@@ -344,7 +344,7 @@ def transmission_update(id):
         })
 
     if action == 'test':
-        mailer.send(g.user.email, trn)
+        mailer.send(g.user, trn)
         msg = gettext('Trial message sent to {}.').format(g.user.email)
         flash(msg, 'success')
 
