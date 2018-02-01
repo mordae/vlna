@@ -6,6 +6,8 @@ Flask-Babel
 Flask-Classy
 Flask-Menu
 Markdown
+markdown2
+premailer
 requests
 SQLSoup
 tabulate

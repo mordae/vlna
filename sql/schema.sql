@@ -414,6 +414,18 @@ CREATE VIEW my_subscriptions AS
 ALTER TABLE my_subscriptions OWNER TO vlna;
 
 --
+-- Name: template; Type: TABLE; Schema: public; Owner: vlna
+--
+
+CREATE TABLE template (
+    name character varying COLLATE public."und-x-icu" NOT NULL,
+    body text COLLATE public."und-x-icu" NOT NULL
+);
+
+
+ALTER TABLE template OWNER TO vlna;
+
+--
 -- Name: campaign id; Type: DEFAULT; Schema: public; Owner: vlna
 --
 
@@ -523,6 +535,14 @@ ALTER TABLE ONLY sender_group
 
 
 --
+-- Name: template template_pkey; Type: CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY template
+    ADD CONSTRAINT template_pkey PRIMARY KEY (name);
+
+
+--
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: vlna
 --
 
@@ -542,6 +562,13 @@ CREATE INDEX channel_public_idx ON channel USING btree (public);
 --
 
 CREATE INDEX fki_campaign_channel_fkey ON campaign USING btree (channel);
+
+
+--
+-- Name: fki_channel_template_fkey; Type: INDEX; Schema: public; Owner: vlna
+--
+
+CREATE INDEX fki_channel_template_fkey ON channel USING btree (template);
 
 
 --
@@ -606,6 +633,14 @@ CREATE INDEX fki_sender_group_channel_fkey ON sender_group USING btree (channel)
 
 ALTER TABLE ONLY campaign
     ADD CONSTRAINT campaign_channel_fkey FOREIGN KEY (channel) REFERENCES channel(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: channel channel_template_fkey; Type: FK CONSTRAINT; Schema: public; Owner: vlna
+--
+
+ALTER TABLE ONLY channel
+    ADD CONSTRAINT channel_template_fkey FOREIGN KEY (template) REFERENCES template(name) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --

@@ -8,6 +8,7 @@ from requests import get, post
 from simplejson import dumps
 
 from vlna.exn import RemoteError
+from vlna.render import render_html
 
 
 __all__ = ['Mailgun']
@@ -44,13 +45,15 @@ class Mailgun:
         except:
             raise MailgunError('Cannot parse.', {'response': r.text})
 
-    def send(self, subject, recipient, body):
-        log.info('Send subject={!r}, to={!r}'.format(subject, recipient))
+    def send(self, recipient, trn):
+        log.info('Test-Send {!r} to {!r}'.format(trn.subject, recipient))
+
         return self.post('messages', data={
             'from': self.sender,
             'to': recipient,
-            'subject': subject,
-            'text': body,
+            'subject': trn.subject,
+            'text': trn.content,
+            'html': render_html(trn),
             'o:testmode': 'yes' if self.testmode else 'no',
             'recipient-variables': dumps({recipient: {}}),
         })

@@ -37,7 +37,6 @@ site.config.from_mapping({
     'BABEL_DEFAULT_LOCALE': 'cs',
     'SQLSOUP_DATABASE_URI': 'postgresql://vlna:vlna@localhost/vlna',
     'MAX_CONTENT_LENGTH': 32 * 1024 * 1024,
-    'DATA_PATH': 'data',
     'MAILGUN_DOMAIN': 'your-domain.tld',
     'MAILGUN_APIKEY': 'generate-some-key-please',
     'MAILGUN_SENDER': 'sender@your-domain.tld',
@@ -47,9 +46,6 @@ if 'VLNA_SETTINGS' in environ:
     # Load rest from a configuration file specified in the environment.
     # Set by the --config option when run using the `vlnad` command.
     site.config.from_envvar('VLNA_SETTINGS')
-
-# Make sure to use absolute path to the data directory.
-site.config['DATA_PATH'] = realpath(site.config['DATA_PATH'])
 
 #
 # Initialize the l18n module.
@@ -121,6 +117,12 @@ db.campaign.relate('Channel', db.channel)
 db.my_campaigns.relate('Channel', db.channel,
     primaryjoin=(db.channel.c.id == db.my_campaigns.c.channel),
     foreign_keys=[db.my_campaigns.c.channel])
+
+db.channel.relate('Template', db.template)
+
+db.my_channels.relate('Template', db.template,
+    primaryjoin=(db.template.c.name == db.my_channels.c.template),
+    foreign_keys=[db.my_channels.c.template])
 
 
 @site.teardown_request
@@ -342,7 +344,7 @@ def transmission_update(id):
         })
 
     if action == 'test':
-        mailer.send(trn.subject, g.user.email, trn.content)
+        mailer.send(g.user.email, trn)
         msg = gettext('Trial message sent to {}.').format(g.user.email)
         flash(msg, 'success')
 
