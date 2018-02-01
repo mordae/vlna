@@ -92,7 +92,7 @@ def get_locale():
 
 @site.template_global('make_token')
 def make_token():
-    return make_csrf_token(site)
+    return make_csrf_token()
 
 
 @site.after_request
@@ -175,7 +175,7 @@ def csrf_protect():
     if request.method == 'POST':
         token = request.form.get('token', '')
 
-        if not csrf_token_valid(site, token):
+        if not csrf_token_valid(token):
             raise InvalidUsage(_('Invalid CSRF token. Return and try again.'))
 
 
@@ -333,8 +333,6 @@ def transmission_update(id):
     subject = request.form.get('subject', trn.subject)
     channel = request.form.get('channel', trn.channel)
     content = request.form.get('content', trn.content)
-
-    print(request.form)
 
     chan = db.my_channels.get(request.form.get('channel'))
 

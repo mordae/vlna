@@ -31,25 +31,27 @@ def map_view(db, name, keys):
     db.map_to(name, selectable=table)
 
 
-def make_csrf_token(site):
+def make_csrf_token():
     """
     Generate an anti-CSRF token.
     """
 
-    return dumps(hmac_sign(site, OrderedDict([
+    return dumps(hmac_sign(OrderedDict([
         ('type', 'csrf'),
         ('time', int(time())),
     ])))
 
 
-def csrf_token_valid(site, token, validity=3600):
+def csrf_token_valid(token, validity=3600):
     """
     Verify that the specified token is valid and not older than allowed.
     """
 
+    from vlna.site import site
+
     try:
         payload = loads(token, object_pairs_hook=OrderedDict)
-        payload = hmac_verify(site, payload)
+        payload = hmac_verify(payload)
 
         if payload.get('type') != 'csrf':
             return False
@@ -63,19 +65,23 @@ def csrf_token_valid(site, token, validity=3600):
     return True
 
 
-def hmac_sign(site, payload):
+def hmac_sign(payload):
+    from vlna.site import site
+
     algo = site.config.get('HMAC_HASH_ALGORITHM', 'sha256')
     datum = dumps(payload).encode('utf8')
     payload['$digest'] = HMAC(site.secret_key, datum, algo).hexdigest()
     return payload
 
 
-def hmac_verify(site, payload):
+def hmac_verify(payload):
+    from vlna.site import site
+
     if not '$digest' in payload:
         raise ValueError('Missing HMAC digest')
 
     digest = payload.pop('$digest')
-    control = hmac_sign(site, payload).pop('$digest')
+    control = hmac_sign(payload).pop('$digest')
 
     if not compare_digest(digest, control):
         raise ValueError('Invalid HMAC digest')
