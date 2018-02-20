@@ -3,6 +3,8 @@
 
 from os import urandom, environ
 from os.path import realpath
+from functools import wraps
+from logging import getLogger, NullHandler
 
 from flask import Flask, request, g, render_template, redirect, flash, url_for
 from flask_menu import Menu, current_menu, register_menu
@@ -12,9 +14,6 @@ from werkzeug.exceptions import Forbidden, NotFound
 
 from sqlsoup import SQLSoup
 from sqlalchemy import text
-
-from functools import wraps
-from logging import getLogger, NullHandler
 
 from vlna.exn import InvalidUsage
 from vlna.util import map_view, make_csrf_token, csrf_token_valid
@@ -117,18 +116,18 @@ map_view(db, 'recipients', ['user', 'channel'])
 db.campaign.relate('Channel', db.channel)
 
 db.my_campaigns.relate('Channel', db.channel,
-    primaryjoin=(db.channel.c.id == db.my_campaigns.c.channel),
-    foreign_keys=[db.my_campaigns.c.channel])
+                       primaryjoin=(db.channel.c.id == db.my_campaigns.c.channel),
+                       foreign_keys=[db.my_campaigns.c.channel])
 
 db.channel.relate('Template', db.template)
 
 db.my_channels.relate('Template', db.template,
-    primaryjoin=(db.template.c.name == db.my_channels.c.template),
-    foreign_keys=[db.my_channels.c.template])
+                      primaryjoin=(db.template.c.name == db.my_channels.c.template),
+                      foreign_keys=[db.my_channels.c.template])
 
 
 @site.teardown_request
-def teardown_request(exn=None):
+def teardown_request(_exn=None):
     """
     Rolls back current session at the end of every request.
     """
@@ -167,7 +166,7 @@ def extract_auth_info():
         msg = _('There is no user account for you, contact administrator.')
         raise InvalidUsage(msg, data={'login': login})
 
-    r = db.connection() \
+    db.connection() \
         .execute(text('select set_user(:name)'), name=login)
 
     g.roles = set(request.headers.get('X-Roles', '').split(';'))
@@ -201,7 +200,7 @@ def require_role(role):
 
 
 @site.errorhandler(Forbidden.code)
-def forbidden(exn):
+def forbidden(_exn):
     return render_template('forbidden.html')
 
 

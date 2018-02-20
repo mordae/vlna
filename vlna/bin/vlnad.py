@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import os
-import click
 
 from os.path import realpath
+from logging import DEBUG, INFO
+from logging import getLogger, NullHandler, StreamHandler, Formatter, root
+
+import click
 
 from aiohttp.web import Application, run_app
 from aiohttp_wsgi import WSGIHandler
-
-from logging import DEBUG, INFO
-from logging import getLogger, NullHandler, StreamHandler, Formatter, root
 
 
 __all__ = ['cli']

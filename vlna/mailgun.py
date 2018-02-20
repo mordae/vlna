@@ -1,11 +1,15 @@
 #!/usr/bin/python3 -tt
 # -*- coding: utf-8 -*-
 
+"""
+Interface for the cloud service Mailgun.
+"""
+
 from logging import getLogger, NullHandler
 from urllib.parse import urljoin
 from email.utils import formataddr
 
-from requests import get, post
+from requests import post
 from simplejson import dumps
 
 from vlna.exn import RemoteError
@@ -22,10 +26,12 @@ log.addHandler(NullHandler())
 
 
 class MailgunError(RemoteError):
-    pass
+    """Mailgun-related error"""
 
 
 class Mailgun:
+    """Mailgun service proxy object."""
+
     def __init__(self, domain, apikey, sender, testmode=False):
         self.domain = domain
         self.apikey = apikey
@@ -33,6 +39,8 @@ class Mailgun:
         self.testmode = testmode
 
     def post(self, url, **kw):
+        """Perform a general POST request."""
+
         full_url = urljoin(API, self.domain + '/' + url)
         r = post(full_url, auth=('api', self.apikey), **kw)
 
@@ -47,17 +55,20 @@ class Mailgun:
             raise MailgunError('Cannot parse.', {'response': r.text})
 
     def send(self, recipient, trn):
+        """Send message to a single recipient."""
         return self.send_many([recipient], trn)
 
     def send_many(self, recipients, trn):
+        """
+        Send message to many recipients.
+        """
+
         groups = [recipients[i : i + 1000]
                   for i in range(0, len(recipients), 1000)]
 
-        for recipients in groups:
-            tos = [formataddr((r.display_name, r.email))
-                   for r in recipients]
-
-            rvs = {r.email: {} for r in recipients}
+        for recs in groups:
+            tos = [formataddr((r.display_name, r.email)) for r in recs]
+            rvs = {r.email: {} for r in recs}
 
             return self.post('messages', data={
                 'from': self.sender,

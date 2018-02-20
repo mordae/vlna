@@ -1,14 +1,16 @@
 #!/usr/bin/python3 -tt
 # -*- coding: utf-8 -*-
 
-from sqlsoup import SQLSoup
-from sqlalchemy import Table, Column
-
-from collections import OrderedDict
-from simplejson import loads, dumps
+"""
+Common utilities that did not fit anywhere else.
+"""
 
 from time import time
+from collections import OrderedDict
 from hmac import new as HMAC, compare_digest
+
+from simplejson import loads, dumps
+from sqlalchemy import Table, Column
 
 
 __all__ = [
@@ -47,8 +49,6 @@ def csrf_token_valid(token, validity=3600):
     Verify that the specified token is valid and not older than allowed.
     """
 
-    from vlna.site import site
-
     try:
         payload = loads(token, object_pairs_hook=OrderedDict)
         payload = hmac_verify(payload)
@@ -66,6 +66,10 @@ def csrf_token_valid(token, validity=3600):
 
 
 def hmac_sign(payload):
+    """
+    Sign the payload dictionary using site secret.
+    """
+
     from vlna.site import site
 
     algo = site.config.get('HMAC_HASH_ALGORITHM', 'sha256')
@@ -75,7 +79,9 @@ def hmac_sign(payload):
 
 
 def hmac_verify(payload):
-    from vlna.site import site
+    """
+    Verify payload dictionary using site secret.
+    """
 
     if not '$digest' in payload:
         raise ValueError('Missing HMAC digest')

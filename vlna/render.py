@@ -1,6 +1,10 @@
 #!/usr/bin/python3 -tt
 # -*- coding: utf-8 -*-
 
+"""
+Tools for rendering plain text messages as mailable HTML.
+"""
+
 from premailer import Premailer
 from markdown2 import markdown
 from jinja2 import Template

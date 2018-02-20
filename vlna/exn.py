@@ -1,6 +1,10 @@
 #!/usr/bin/python3 -tt
 # -*- coding: utf-8 -*-
 
+"""
+Common exception classes.
+"""
+
 
 class InvalidUsage(Exception):
     """
