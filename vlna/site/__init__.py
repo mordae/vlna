@@ -261,30 +261,13 @@ def update_subscriptions():
 
 
 from vlna.site.trn import TrnView
+from vlna.site.chan import ChanView
 
 TrnView.register(site)
 register_flaskview(site, TrnView)
 
-
-@site.route('/chan/')
-@register_menu(site, 'chan', _('Channels'),
-               visible_when=lambda: 'admin' in g.roles)
-@require_role('admin')
-def channels():
-    chans = db.channel.order_by('name').all()
-
-    return render_template('chan/list.html', chans=chans)
-
-
-@site.route('/chan/edit/<int:id>')
-@require_role('admin')
-def edit_channel(id):
-    chan = db.channel.get(id)
-
-    if chan is None:
-        raise NotFound(gettext('No such channel'))
-
-    return render_template('chan/edit.html', chan=chan)
+ChanView.register(site)
+register_flaskview(site, ChanView)
 
 
 # vim:set sw=4 ts=4 et:
