@@ -50,20 +50,24 @@ class Mailgun:
         return self.send_many([recipient], trn)
 
     def send_many(self, recipients, trn):
-        tos = [formataddr((r.display_name, r.email))
-               for r in recipients]
+        groups = [recipients[i : i + 1000]
+                  for i in range(0, len(recipients), 1000)]
 
-        rvs = {r.email: {} for r in recipients}
+        for recipients in groups:
+            tos = [formataddr((r.display_name, r.email))
+                   for r in recipients]
 
-        return self.post('messages', data={
-            'from': self.sender,
-            'to': ', '.join(tos),
-            'subject': trn.subject,
-            'text': trn.content,
-            'html': render_html(trn),
-            'o:testmode': 'yes' if self.testmode else 'no',
-            'recipient-variables': dumps(rvs),
-        })
+            rvs = {r.email: {} for r in recipients}
+
+            return self.post('messages', data={
+                'from': self.sender,
+                'to': ', '.join(tos),
+                'subject': trn.subject,
+                'text': trn.content,
+                'html': render_html(trn),
+                'o:testmode': 'yes' if self.testmode else 'no',
+                'recipient-variables': dumps(rvs),
+            })
 
 
 # vim:set sw=4 ts=4 et:
