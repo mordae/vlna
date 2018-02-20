@@ -4,7 +4,7 @@
 from flask import request, g, render_template, redirect, url_for, flash
 from flask_classy import FlaskView, route
 from flask_menu.classy import classy_menu_item
-from flask_babel import lazy_gettext as _
+from flask_babel import gettext, lazy_gettext as _
 
 from vlna.exn import InvalidUsage
 from vlna.site import db, require_role
@@ -23,6 +23,12 @@ class ChanView(FlaskView):
         chans = db.channel.order_by('name').all()
 
         return render_template('chan/list.html', chans=chans)
+
+
+    @route('/add')
+    @require_role('admin')
+    def add(self):
+        return 'TODO', 500
 
 
     @route('/edit/<int:id>')

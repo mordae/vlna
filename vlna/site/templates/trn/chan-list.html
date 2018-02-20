@@ -6,7 +6,7 @@
 <div class="breadcrumb-panel">
  <div class="container">
   <ul class="breadcrumb">
-   <li><a href="/trn/">{{_('Transmissions')}}</a></li>
+   <li><a href="{{url_for('TrnView:index')}}">{{_('Transmissions')}}</a></li>
    <li>{{chan.name}}</li>
   </ul>
  </div>
@@ -17,7 +17,7 @@
 <div class="container">
  <h2>
   {{chan.name}}
-  <a href="/trn/add?channel={{chan.id}}" class="btn btn-success pull-right">{{_('Create')}}</a>
+  <a href="{{url_for('TrnView:add', channel=chan.id)}}" class="btn btn-success pull-right">{{_('Create')}}</a>
  </h2>
 
  <table class="table table-bordered table-hover">
@@ -30,7 +30,7 @@
   <tbody>
    {% for trn in trns %}
    <tr class="trn-{{trn.state}}">
-    <td><a href="/trn/edit/{{trn.id}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
+    <td><a href="{{url_for('TrnView:edit', id=trn.id)}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
     <td>
      {% if trn.state == 'draft' %}
      {{_('Draft')}}

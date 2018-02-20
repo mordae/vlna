@@ -6,7 +6,7 @@
 <div class="container">
  <h2>
   {{_('Channels')}}
-  <a href="/chan/add" class="btn btn-success pull-right">{{_('Create')}}</a>
+  <a href="{{url_for('ChanView:add')}}" class="btn btn-success pull-right">{{_('Create')}}</a>
  </h2>
 
  <table class="table table-bordered table-hover">
@@ -19,7 +19,7 @@
   <tbody>
    {% for chan in chans %}
    <tr>
-    <td><a href="/chan/edit/{{chan.id}}"><i class="fa fa-feed"></i> {{chan.name}}</a></td>
+    <td><a href="{{url_for('ChanView:edit', id=chan.id)}}"><i class="fa fa-feed"></i> {{chan.name}}</a></td>
     <td class="text-center">
      {% if chan.public %}
      <i class="fa fa-check"></i>

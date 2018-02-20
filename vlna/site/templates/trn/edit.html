@@ -10,8 +10,8 @@
 <div class="breadcrumb-panel">
  <div class="container">
   <ul class="breadcrumb">
-   <li><a href="/trn/">{{_('Transmissions')}}</a></li>
-   <li><a href="/trn/chan/{{trn.channel}}">{{trn.Channel.name}}</a></li>
+   <li><a href="{{url_for('TrnView:index')}}">{{_('Transmissions')}}</a></li>
+   <li><a href="{{url_for('TrnView:chan', id=trn.channel)}}">{{trn.Channel.name}}</a></li>
    <li>{{trn.subject}}</li>
   </ul>
  </div>
@@ -23,7 +23,7 @@
  <h2>{{trn.subject}}</h2>
  <hr />
 
- <form action="/trn/update/{{trn.id}}" method="POST">
+ <form action="{{url_for('TrnView:update', id=trn.id)}}" method="POST">
   <input type="hidden" name="token" value="{{make_token()}}"/>
 
   <div class="row">

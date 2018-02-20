@@ -6,7 +6,7 @@
 <div class="container">
  <h2>
   {{_('Transmissions')}}
-  <a href="/trn/add" class="btn btn-success pull-right">{{_('Create')}}</a>
+  <a href="{{url_for('TrnView:index')}}" class="btn btn-success pull-right">{{_('Create')}}</a>
  </h2>
 
  <table class="table table-bordered table-hover">
@@ -20,12 +20,8 @@
   <tbody>
    {% for trn in trns %}
    <tr class="trn-{{trn.state}}">
-    {% if trn.state == 'sent' %}
-    <td><i class="fa fa-bullhorn"></i> {{trn.subject}}</td>
-    {% else %}
-    <td><a href="/trn/edit/{{trn.id}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
-    {% endif %}
-    <td><a href="/trn/chan/{{trn.channel}}/"><i class="fa fa-feed"></i> {{trn.Channel.name}}</a></td>
+    <td><a href="{{url_for('TrnView:edit', id=trn.id)}}"><i class="fa fa-bullhorn"></i> {{trn.subject}}</a></td>
+    <td><a href="{{url_for('TrnView:chan', id=trn.channel)}}"><i class="fa fa-feed"></i> {{trn.Channel.name}}</a></td>
     <td>
      {% if trn.state == 'draft' %}
      {{_('Draft')}}
@@ -46,7 +42,7 @@
   <tfoot>
    <tr>
     <td colspan="3" class="text-center">
-     <a href="/trn/all/">{{_('More')}}</a>
+     <a href="{{url_for('TrnView:all')}}">{{_('More')}}</a>
     </td>
    </tr>
   </tfoot>
@@ -57,7 +53,7 @@
  <div class="lentils">
   {% for chan in chans: %}
   <div class="lentil">
-   <a href="/trn/chan/{{chan.id}}/"><i class="fa fa-feed"></i> {{chan.name}}</a>
+   <a href="{{url_for('TrnView:chan', id=chan.id)}}"><i class="fa fa-feed"></i> {{chan.name}}</a>
   </div>
   {% else %}
   <p>{{_('No channels accessible. Sorry.')}}</p>
