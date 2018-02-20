@@ -55,7 +55,7 @@ def cli(config, debug):
     # Dump current configuration to the log.
     log.debug('Configuration:')
     for key, value in sorted(site.config.items()):
-        log.debug('  {} = {!r}'.format(key, value))
+        log.debug('  %s = %r', key, value)
 
     # Prepare WSGI handler for the web site.
     handler = WSGIHandler(site)
