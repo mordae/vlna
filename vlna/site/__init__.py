@@ -110,6 +110,7 @@ db = SQLSoup(site.config['SQLSOUP_DATABASE_URI'])
 map_view(db, 'my_subscriptions', ['id'])
 map_view(db, 'my_channels', ['id'])
 map_view(db, 'my_campaigns', ['id'])
+map_view(db, 'recipients', ['user', 'channel'])
 
 # Specify automatic row relations.
 db.campaign.relate('Channel', db.channel)
@@ -343,24 +344,46 @@ def transmission_update(id):
             'channel': request.form.get('channel'),
         })
 
-    if action == 'test':
-        mailer.send(g.user, trn)
+    if action not in ('test', 'save', 'send'):
+        raise InvalidUsage(gettext('Invalid action.'), {'action': action})
+
+    camp = db.campaign.get(id)
+    camp.subject = subject
+    camp.channel = channel
+    camp.content = content
+
+    db.commit()
+
+    if trn.subject != camp.subject or \
+       trn.channel != camp.channel or \
+       trn.content != camp.content:
+        flash(gettext('Modifications successfully saved.'), 'success')
+
+    if action == 'save':
+        pass
+
+    elif action == 'test':
+        mailer.send(g.user, camp)
+
         msg = gettext('Trial message sent to {}.').format(g.user.email)
         flash(msg, 'success')
 
-    elif action == 'save':
-        camp = db.campaign.get(id)
-        camp.subject = subject
-        camp.channel = channel
-        camp.content = content
-        db.commit()
-        flash(gettext('Modifications successfully saved.'), 'success')
+        return redirect(url_for('transmission_edit', id=id))
 
     else:
-        # TODO: Implement other action.
-        flash('Not yet implemented.', 'danger')
+        recs = db.recipients \
+                .filter_by(channel=camp.channel, active=True) \
+                .all()
 
-    return redirect(url_for('transmission_edit', id=id))
+        mailer.send_many(recs, camp)
+
+        camp.state = 'sent'
+        db.commit()
+
+        msg = gettext('Message sent through the channel.')
+        flash(msg, 'success')
+
+    return redirect(url_for('transmissions'))
 
 
 @site.route('/chan/')
