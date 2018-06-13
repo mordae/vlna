@@ -1,5 +1,5 @@
-aiohttp<3,>=2
-aiohttp-wsgi<1
+aiohttp
+aiohttp-wsgi
 Bleach
 click
 Flask-Babel
@@ -11,3 +11,5 @@ premailer
 requests
 SQLSoup
 tabulate
+simplejson
+psycopg2-binary
