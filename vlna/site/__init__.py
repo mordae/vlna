@@ -206,6 +206,7 @@ def forbidden(_exn):
 
 @site.errorhandler(InvalidUsage)
 def invalid_usage(exn):
+    log.error('Exception: %s, data=%r', exn, exn.data)
     return render_template('invalid-usage.html', exn=exn), exn.status
 
 
